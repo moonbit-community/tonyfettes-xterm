@@ -69,21 +69,22 @@ Task fields:
 
 ### Phase 0: Harness Scaffold
 
-Gate: deferred until the headless core has real state
-Status: deferred
+Gate: available for a starter harness after Phase 3 plus the minimal headless
+write path
+Status: todo
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P0.1 | deferred | `package.json` harness scripts | real headless state | scripts exist for harness check, list, reference, update, and test | `npm run harness:check`; `npm run harness:list` | `test` |
-| P0.2 | deferred | `tools/harness/cases/headless-basic.json` | P0.1 | first headless fixture suite covers plain text, CRLF, UTF-8 bytes, CJK width, SGR, scrollback, and alt buffer | `npm run harness:list` | `test` |
-| P0.3 | deferred | `tools/harness/reference-xterm.mjs` | P0.1, P0.2 | reference runner reads one case and writes one snapshot JSON object | `npm run harness:check` | `test` |
-| P0.4 | deferred | `tools/harness/run.mjs` | P0.1, P0.2, P0.3 | harness can list cases, generate reference snapshots, and compare implementation snapshots through a command interface | `npm run harness:check`; `npm run harness:list` | `test` |
-| P0.5 | deferred | `tools/harness/README.md` | P0.1-P0.4 | runner contract, commands, and reference-build expectations are documented | doc review | `docs` |
+| P0.1 | todo | `package.json` harness scripts | minimal headless write path | scripts exist for harness check, list, reference, update, and test | `npm run harness:check`; `npm run harness:list` | `test` |
+| P0.2 | todo | `tools/harness/cases/headless-basic.json` | P0.1 | first headless fixture suite covers plain text, CRLF, BS, wrapping, and scrollback cases supported by current state | `npm run harness:list` | `test` |
+| P0.3 | todo | `tools/harness/reference-xterm.mjs` | P0.1, P0.2 | reference runner reads one case and writes one snapshot JSON object | `npm run harness:check` | `test` |
+| P0.4 | todo | `tools/harness/run.mjs` | P0.1, P0.2, P0.3 | harness can list cases, generate reference snapshots, and compare implementation snapshots through a command interface | `npm run harness:check`; `npm run harness:list` | `test` |
+| P0.5 | todo | `tools/harness/README.md` | P0.1-P0.4 | runner contract, commands, and reference-build expectations are documented | doc review | `docs` |
 
 Phase 0 notes:
 
-- The harness scaffold is parked. Do not expand it until there is a real
-  headless terminal state to snapshot.
+- A starter harness can now target the minimal headless state surface:
+  printable ASCII, CR, LF, BS, basic wrapping, and bottom-row scroll.
 - The reference adapter expects a prebuilt xterm.js headless bundle.
 - The harness does not build the submodule automatically.
 - Reference snapshots may be generated under `tools/harness/snapshots/` by an
@@ -132,7 +133,7 @@ Phase 2 notes:
 ### Phase 3: Buffer Core
 
 Gate: serial/parallel after Phase 2
-Status: todo
+Status: done
 
 Reference files:
 
@@ -145,10 +146,17 @@ Reference files:
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P3.1 | todo | attribute and cell data | Phase 2 | cell content, width, codepoint, and attrs are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
-| P3.2 | todo | buffer line | P3.1 | line get/set/insert/delete/translate behavior is covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
-| P3.3 | todo | circular list | Phase 2 | bounded scrollback storage semantics are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
-| P3.4 | todo | normal and alternate buffers | P3.2, P3.3 | active buffer, cursor, viewport, base, and basic resize state are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
+| P3.1 | done | attribute and cell data | Phase 2 | cell content, width, codepoint, and attrs are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
+| P3.2 | done | buffer line | P3.1 | line get/set/insert/delete/translate behavior is covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
+| P3.3 | done | circular list | Phase 2 | bounded scrollback storage semantics are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
+| P3.4 | done | normal and alternate buffers | P3.2, P3.3 | active buffer, cursor, viewport, base, and basic resize state are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(buffer)` |
+
+Phase 3 notes:
+
+- `src/common/buffer` now has real buffer state and viewport text export.
+- `src/common` now has bounded `CircularList` scrollback storage.
+- `src/terminal` has a minimal direct `Terminal.write` path for starter
+  harness cases. Full parser-backed input remains Phase 4/5 work.
 
 ### Phase 4: Parser Core
 

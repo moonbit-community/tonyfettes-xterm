@@ -1,0 +1,3 @@
+import {
+  "feihaoxiang/xterm/src/common" @common,
+}

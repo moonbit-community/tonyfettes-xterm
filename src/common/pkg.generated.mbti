@@ -1,11 +1,40 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "feihaoxiang/xterm/src/common"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
 
 // Types and methods
+type CircularList[T]
+pub fn[T] CircularList::get(Self[T], Int) -> T?
+pub fn[T] CircularList::is_full(Self[T]) -> Bool
+pub fn[T] CircularList::length(Self[T]) -> Int
+pub fn[T] CircularList::max_length(Self[T]) -> Int
+pub fn[T] CircularList::new(Int) -> Self[T]
+pub fn[T] CircularList::on_delete(Self[T], (DeleteEvent) -> Unit) -> Disposable
+pub fn[T] CircularList::on_insert(Self[T], (InsertEvent) -> Unit) -> Disposable
+pub fn[T] CircularList::on_trim(Self[T], (Int) -> Unit) -> Disposable
+pub fn[T] CircularList::pop(Self[T]) -> T?
+pub fn[T] CircularList::push(Self[T], T) -> Unit
+pub fn[T] CircularList::recycle(Self[T]) -> T?
+pub fn[T] CircularList::set(Self[T], Int, T?) -> Unit
+pub fn[T] CircularList::set_length(Self[T], Int) -> Unit
+pub fn[T] CircularList::set_max_length(Self[T], Int) -> Unit
+pub fn[T] CircularList::shift_elements(Self[T], Int, Int, Int) -> Unit
+pub fn[T] CircularList::splice(Self[T], Int, Int, Array[T]) -> Unit
+pub fn[T] CircularList::to_array(Self[T]) -> Array[T?]
+pub fn[T] CircularList::trim_start(Self[T], Int) -> Unit
+
+pub(all) struct DeleteEvent {
+  index : Int
+  amount : Int
+} derive(Eq, @debug.Debug)
+
 type Disposable
 pub fn Disposable::dispose(Self) -> Unit
 
@@ -14,6 +43,11 @@ pub fn[T] Emitter::dispose(Self[T]) -> Unit
 pub fn[T] Emitter::event(Self[T], (T) -> Unit) -> Disposable
 pub fn[T] Emitter::fire(Self[T], T) -> Unit
 pub fn[T] Emitter::new() -> Self[T]
+
+pub(all) struct InsertEvent {
+  index : Int
+  amount : Int
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

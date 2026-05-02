@@ -1,1 +1,3 @@
-
+import {
+  "feihaoxiang/xterm/src/common/buffer" @buffer,
+}

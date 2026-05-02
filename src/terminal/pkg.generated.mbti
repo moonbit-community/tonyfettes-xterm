@@ -1,11 +1,23 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "feihaoxiang/xterm/src/terminal"
 
+import {
+  "feihaoxiang/xterm/src/common/buffer",
+}
+
 // Values
 
 // Errors
 
 // Types and methods
+type Terminal
+pub fn Terminal::buffer(Self) -> @buffer.Buffer
+pub fn Terminal::buffers(Self) -> @buffer.BufferSet
+pub fn Terminal::cursor_x(Self) -> Int
+pub fn Terminal::cursor_y(Self) -> Int
+pub fn Terminal::new(Int, Int, Int) -> Self
+pub fn Terminal::screen_text(Self, Bool) -> String
+pub fn Terminal::write(Self, String) -> Unit
 
 // Type aliases
 

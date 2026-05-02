@@ -1,0 +1,250 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "feihaoxiang/xterm/src/common/buffer"
+
+import {
+  "feihaoxiang/xterm/src/common",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const BgDim : Int = 0x8000000
+
+pub const BgHasExtended : Int = 0x10000000
+
+pub const BgItalic : Int = 0x4000000
+
+pub const BgOverline : Int = 0x40000000
+
+pub const BgProtected : Int = 0x20000000
+
+pub const BlueShift : Int = 0
+
+pub const CmDefault : Int = 0
+
+pub const CmMask : Int = 0x3000000
+
+pub const CmP16 : Int = 0x1000000
+
+pub const CmP256 : Int = 0x2000000
+
+pub const CmRgb : Int = 0x3000000
+
+pub const ContentCodepointMask : Int = 0x1FFFFF
+
+pub const ContentHasContentMask : Int = 0x3FFFFF
+
+pub const ContentIsCombinedMask : Int = 0x200000
+
+pub const ContentWidthMask : Int = 0xC00000
+
+pub const ContentWidthShift : Int = 22
+
+pub const DefaultAttr : Int = 256
+
+pub const DefaultColor : Int = 0
+
+pub const FgBlink : Int = 0x20000000
+
+pub const FgBold : Int = 0x8000000
+
+pub const FgInverse : Int = 0x4000000
+
+pub const FgInvisible : Int = 0x40000000
+
+pub const FgUnderline : Int = 0x10000000
+
+pub const GreenShift : Int = 8
+
+pub const NullCellChar : String = ""
+
+pub const NullCellCode : Int = 0
+
+pub const NullCellWidth : Int = 1
+
+pub const PcolorMask : Int = 0xFF
+
+pub const RedShift : Int = 16
+
+pub const RgbMask : Int = 0xFFFFFF
+
+pub const UnderlineStyleMask : Int = 0x1C000000
+
+pub const WhitespaceCellChar : String = " "
+
+pub const WhitespaceCellCode : Int = 32
+
+pub const WhitespaceCellWidth : Int = 1
+
+// Errors
+
+// Types and methods
+type AttributeData
+pub fn AttributeData::bg(Self) -> Int
+pub fn AttributeData::clone(Self) -> Self
+pub fn AttributeData::extended(Self) -> ExtendedAttrs
+pub fn AttributeData::fg(Self) -> Int
+pub fn AttributeData::from_color_rgb((Int, Int, Int)) -> Int
+pub fn AttributeData::get_bg_color(Self) -> Int
+pub fn AttributeData::get_bg_color_mode(Self) -> Int
+pub fn AttributeData::get_fg_color(Self) -> Int
+pub fn AttributeData::get_fg_color_mode(Self) -> Int
+pub fn AttributeData::get_underline_color(Self) -> Int
+pub fn AttributeData::get_underline_color_mode(Self) -> Int
+pub fn AttributeData::get_underline_style(Self) -> UnderlineStyle
+pub fn AttributeData::get_underline_variant_offset(Self) -> Int
+pub fn AttributeData::has_extended_attrs(Self) -> Bool
+pub fn AttributeData::is_attribute_default(Self) -> Bool
+pub fn AttributeData::is_bg_default(Self) -> Bool
+pub fn AttributeData::is_bg_palette(Self) -> Bool
+pub fn AttributeData::is_bg_rgb(Self) -> Bool
+pub fn AttributeData::is_blink(Self) -> Bool
+pub fn AttributeData::is_bold(Self) -> Bool
+pub fn AttributeData::is_dim(Self) -> Bool
+pub fn AttributeData::is_fg_default(Self) -> Bool
+pub fn AttributeData::is_fg_palette(Self) -> Bool
+pub fn AttributeData::is_fg_rgb(Self) -> Bool
+pub fn AttributeData::is_inverse(Self) -> Bool
+pub fn AttributeData::is_invisible(Self) -> Bool
+pub fn AttributeData::is_italic(Self) -> Bool
+pub fn AttributeData::is_overline(Self) -> Bool
+pub fn AttributeData::is_protected(Self) -> Bool
+pub fn AttributeData::is_underline(Self) -> Bool
+pub fn AttributeData::is_underline_color_default(Self) -> Bool
+pub fn AttributeData::is_underline_color_palette(Self) -> Bool
+pub fn AttributeData::is_underline_color_rgb(Self) -> Bool
+pub fn AttributeData::new() -> Self
+pub fn AttributeData::set_bg(Self, Int) -> Unit
+pub fn AttributeData::set_fg(Self, Int) -> Unit
+pub fn AttributeData::to_color_rgb(Int) -> (Int, Int, Int)
+pub fn AttributeData::update_extended(Self) -> Unit
+
+type Buffer
+pub fn Buffer::clear(Self) -> Unit
+pub fn Buffer::cols(Self) -> Int
+pub fn Buffer::fill_viewport_rows(Self, AttributeData?) -> Unit
+pub fn Buffer::get_blank_line(Self, AttributeData?, Bool) -> BufferLine
+pub fn Buffer::get_null_cell(Self, AttributeData?) -> CellData
+pub fn Buffer::get_whitespace_cell(Self, AttributeData?) -> CellData
+pub fn Buffer::get_wrapped_range_for_line(Self, Int) -> WrappedRange
+pub fn Buffer::has_scrollback(Self) -> Bool
+pub fn Buffer::line_at_cursor(Self) -> BufferLine?
+pub fn Buffer::line_at_viewport_y(Self, Int) -> BufferLine?
+pub fn Buffer::lines(Self) -> @common.CircularList[BufferLine]
+pub fn Buffer::new(Bool, Int, Int, Int) -> Self
+pub fn Buffer::resize(Self, Int, Int) -> Unit
+pub fn Buffer::rows(Self) -> Int
+pub fn Buffer::scroll_bottom(Self) -> Int
+pub fn Buffer::scroll_top(Self) -> Int
+pub fn Buffer::scroll_up_one(Self, AttributeData?) -> Unit
+pub fn Buffer::set_x(Self, Int) -> Unit
+pub fn Buffer::set_y(Self, Int) -> Unit
+pub fn Buffer::set_ybase(Self, Int) -> Unit
+pub fn Buffer::set_ydisp(Self, Int) -> Unit
+pub fn Buffer::translate_buffer_line_to_string(Self, Int, Bool, Int, Int) -> String
+pub fn Buffer::viewport_to_string(Self, Bool) -> String
+pub fn Buffer::x(Self) -> Int
+pub fn Buffer::y(Self) -> Int
+pub fn Buffer::ybase(Self) -> Int
+pub fn Buffer::ydisp(Self) -> Int
+
+pub(all) enum BufferKind {
+  Normal
+  Alt
+} derive(Eq, @debug.Debug)
+
+type BufferLine
+pub fn BufferLine::add_codepoint_to_cell(Self, Int, Int, Int) -> Unit
+pub fn BufferLine::clone(Self) -> Self
+pub fn BufferLine::copy_from(Self, Self) -> Unit
+pub fn BufferLine::delete_cells(Self, Int, Int, CellData) -> Unit
+pub fn BufferLine::fill(Self, CellData) -> Unit
+pub fn BufferLine::get(Self, Int) -> CharData
+pub fn BufferLine::get_bg(Self, Int) -> Int
+pub fn BufferLine::get_codepoint(Self, Int) -> Int
+pub fn BufferLine::get_fg(Self, Int) -> Int
+pub fn BufferLine::get_string(Self, Int) -> String
+pub fn BufferLine::get_trimmed_length(Self) -> Int
+pub fn BufferLine::get_width(Self, Int) -> Int
+pub fn BufferLine::has_content(Self, Int) -> Bool
+pub fn BufferLine::has_width(Self, Int) -> Bool
+pub fn BufferLine::insert_cells(Self, Int, Int, CellData) -> Unit
+pub fn BufferLine::is_combined(Self, Int) -> Bool
+pub fn BufferLine::is_protected(Self, Int) -> Bool
+pub fn BufferLine::is_wrapped(Self) -> Bool
+pub fn BufferLine::length(Self) -> Int
+pub fn BufferLine::load_cell(Self, Int, CellData) -> CellData
+pub fn BufferLine::new(Int, CellData?, Bool) -> Self
+pub fn BufferLine::replace_cells(Self, Int, Int, CellData) -> Unit
+pub fn BufferLine::resize(Self, Int, CellData) -> Bool
+pub fn BufferLine::set(Self, Int, CharData) -> Unit
+pub fn BufferLine::set_cell(Self, Int, CellData) -> Unit
+pub fn BufferLine::set_cell_from_codepoint(Self, Int, Int, Int, AttributeData) -> Unit
+pub fn BufferLine::set_is_wrapped(Self, Bool) -> Unit
+pub fn BufferLine::to_array(Self) -> Array[CharData]
+pub fn BufferLine::translate_to_string(Self, Bool, Int, Int) -> String
+
+type BufferSet
+pub fn BufferSet::activate_alt_buffer(Self, AttributeData?) -> Unit
+pub fn BufferSet::activate_normal_buffer(Self) -> Unit
+pub fn BufferSet::active(Self) -> Buffer
+pub fn BufferSet::active_kind(Self) -> BufferKind
+pub fn BufferSet::alt(Self) -> Buffer
+pub fn BufferSet::new(Int, Int, Int) -> Self
+pub fn BufferSet::normal(Self) -> Buffer
+pub fn BufferSet::resize(Self, Int, Int) -> Unit
+
+type CellData
+pub fn CellData::attributes_equals(Self, Self) -> Bool
+pub fn CellData::bg(Self) -> Int
+pub fn CellData::clone(Self) -> Self
+pub fn CellData::extended(Self) -> ExtendedAttrs
+pub fn CellData::fg(Self) -> Int
+pub fn CellData::from_char_data(CharData) -> Self
+pub fn CellData::get_as_char_data(Self) -> CharData
+pub fn CellData::get_chars(Self) -> String
+pub fn CellData::get_code(Self) -> Int
+pub fn CellData::get_width(Self) -> Int
+pub fn CellData::is_combined(Self) -> Bool
+pub fn CellData::new() -> Self
+pub fn CellData::set_bg(Self, Int) -> Unit
+pub fn CellData::set_fg(Self, Int) -> Unit
+pub fn CellData::set_from_char_data(Self, CharData) -> Unit
+pub fn CellData::update_extended(Self) -> Unit
+
+type CharData derive(Eq, @debug.Debug)
+pub fn CharData::attr(Self) -> Int
+pub fn CharData::chars(Self) -> String
+pub fn CharData::code(Self) -> Int
+pub fn CharData::new(Int, String, Int, Int) -> Self
+pub fn CharData::width(Self) -> Int
+
+type ExtendedAttrs
+pub fn ExtendedAttrs::clone(Self) -> Self
+pub fn ExtendedAttrs::is_empty(Self) -> Bool
+pub fn ExtendedAttrs::new() -> Self
+pub fn ExtendedAttrs::set_underline_color(Self, Int) -> Unit
+pub fn ExtendedAttrs::set_underline_style(Self, UnderlineStyle) -> Unit
+pub fn ExtendedAttrs::set_underline_variant_offset(Self, Int) -> Unit
+pub fn ExtendedAttrs::set_url_id(Self, Int) -> Unit
+pub fn ExtendedAttrs::underline_color(Self) -> Int
+pub fn ExtendedAttrs::underline_style(Self) -> UnderlineStyle
+pub fn ExtendedAttrs::underline_variant_offset(Self) -> Int
+pub fn ExtendedAttrs::url_id(Self) -> Int
+
+pub(all) enum UnderlineStyle {
+  None
+  Single
+  Double
+  Curly
+  Dotted
+  Dashed
+} derive(Eq, @debug.Debug)
+
+pub(all) struct WrappedRange {
+  first : Int
+  last : Int
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
