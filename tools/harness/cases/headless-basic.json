@@ -24,67 +24,37 @@
       ]
     },
     {
-      "name": "utf8 bytes",
-      "options": {
-        "allowProposedApi": true,
-        "cols": 10,
-        "rows": 3
-      },
-      "writes": [
-        {
-          "bytes": [102, 111, 111]
-        },
-        {
-          "bytes": [230, 150, 135]
-        }
-      ]
-    },
-    {
-      "name": "wide cjk cell",
-      "options": {
-        "allowProposedApi": true,
-        "cols": 10,
-        "rows": 3
-      },
-      "writes": [
-        "foo文bar"
-      ]
-    },
-    {
-      "name": "sgr foreground color",
-      "options": {
-        "allowProposedApi": true,
-        "cols": 10,
-        "rows": 3
-      },
-      "writes": [
-        "\u001b[31mred\u001b[0m"
-      ]
-    },
-    {
-      "name": "scrollback",
+      "name": "backspace overwrites",
       "options": {
         "allowProposedApi": true,
         "cols": 5,
+        "rows": 3
+      },
+      "writes": [
+        "ab\bC"
+      ]
+    },
+    {
+      "name": "basic wrap",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 3,
+        "rows": 2
+      },
+      "writes": [
+        "abcde"
+      ]
+    },
+    {
+      "name": "bottom row scroll",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 8,
         "rows": 3,
         "scrollback": 10
       },
       "writes": [
         "one\r\ntwo\r\nthree\r\nfour"
-      ]
-    },
-    {
-      "name": "alternate buffer round trip",
-      "options": {
-        "allowProposedApi": true,
-        "cols": 5,
-        "rows": 3
-      },
-      "writes": [
-        "main",
-        "\u001b[?1049h",
-        "alt",
-        "\u001b[?1049l"
       ]
     }
   ]

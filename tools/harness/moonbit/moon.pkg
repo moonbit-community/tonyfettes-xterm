@@ -1,0 +1,9 @@
+import {
+  "feihaoxiang/xterm/src/terminal" @terminal,
+  "moonbitlang/core/env" @env,
+  "moonbitlang/core/string" @string,
+}
+
+options(
+  "is-main": true,
+)

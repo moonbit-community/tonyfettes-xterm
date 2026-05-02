@@ -1,15 +1,17 @@
 # Headless Compatibility Harness
 
-This deferred harness compares serialized terminal state from two implementations:
+This starter harness compares serialized terminal text state from two
+implementations:
 
 - reference: xterm.js headless from `reference/xterm.js`
-- implementation: a future MoonBit terminal snapshot command
+- implementation: the MoonBit terminal through `tools/harness/moonbit-terminal.mjs`
 
 It is intentionally command-based so MoonBit internals can change without
 rewriting the harness.
 
-The harness is parked until the MoonBit headless core has real terminal state.
-Do not add placeholder snapshot commands just to make this comparison run.
+The current fixture set is deliberately small. It only covers behavior already
+present in the MoonBit headless path: printable ASCII, CR, LF, BS, wrapping, and
+bottom-row scroll.
 
 ## Case Format
 
@@ -23,9 +25,10 @@ Each write can be a string or an object:
 
 ```json
 { "text": "hello" }
-{ "line": "hello" }
-{ "bytes": [102, 111, 111] }
 ```
+
+`line`, byte writes, SGR, CSI, UTF-8 decoding, CJK width, alternate buffer, and
+DOM behavior are deferred until the parser/input work supports them.
 
 ## Commands
 
@@ -33,6 +36,12 @@ List cases:
 
 ```sh
 npm run harness:list
+```
+
+Build the xterm.js headless reference:
+
+```sh
+npm run harness:prepare-reference
 ```
 
 Generate reference snapshots:
@@ -47,7 +56,13 @@ install dependencies or build `reference/xterm.js`.
 Run comparison against a MoonBit implementation command once that command exists:
 
 ```sh
-MOONBIT_XTERM_SNAPSHOT_CMD='<future snapshot command>' npm run harness:test
+npm run harness:test
+```
+
+Run only the MoonBit side, without a built xterm.js reference:
+
+```sh
+npm run harness:moonbit
 ```
 
 The implementation command must read one case JSON object from stdin and write
@@ -61,4 +76,7 @@ adapter looks for:
 - `reference/xterm.js/headless/lib-headless/xterm-headless.mjs`
 - `reference/xterm.js/headless/lib-headless/xterm-headless.js`
 
-The harness does not build the submodule automatically.
+Use `npm run harness:prepare-reference` to install the submodule dependencies and
+build the headless bundle. `npm run harness:test` does not build the submodule
+automatically; it only compares the already-built reference with the MoonBit
+implementation.

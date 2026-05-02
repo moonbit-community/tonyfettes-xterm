@@ -71,15 +71,15 @@ Task fields:
 
 Gate: available for a starter harness after Phase 3 plus the minimal headless
 write path
-Status: todo
+Status: done
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P0.1 | todo | `package.json` harness scripts | minimal headless write path | scripts exist for harness check, list, reference, update, and test | `npm run harness:check`; `npm run harness:list` | `test` |
-| P0.2 | todo | `tools/harness/cases/headless-basic.json` | P0.1 | first headless fixture suite covers plain text, CRLF, BS, wrapping, and scrollback cases supported by current state | `npm run harness:list` | `test` |
-| P0.3 | todo | `tools/harness/reference-xterm.mjs` | P0.1, P0.2 | reference runner reads one case and writes one snapshot JSON object | `npm run harness:check` | `test` |
-| P0.4 | todo | `tools/harness/run.mjs` | P0.1, P0.2, P0.3 | harness can list cases, generate reference snapshots, and compare implementation snapshots through a command interface | `npm run harness:check`; `npm run harness:list` | `test` |
-| P0.5 | todo | `tools/harness/README.md` | P0.1-P0.4 | runner contract, commands, and reference-build expectations are documented | doc review | `docs` |
+| P0.1 | done | `package.json` harness scripts | minimal headless write path | scripts exist for harness check, list, reference, update, implementation-only, and test | `npm run harness:check`; `npm run harness:list` | `test` |
+| P0.2 | done | `tools/harness/cases/headless-basic.json` | P0.1 | first headless fixture suite covers plain text, CRLF, BS, wrapping, and scrollback cases supported by current state | `npm run harness:list` | `test` |
+| P0.3 | done | `tools/harness/reference-xterm.mjs` | P0.1, P0.2 | reference runner reads one case and writes one snapshot JSON object | `npm run harness:check` | `test` |
+| P0.4 | done | `tools/harness/run.mjs` | P0.1, P0.2, P0.3 | harness can list cases, generate reference snapshots, run MoonBit snapshots, and compare through a command interface | `npm run harness:check`; `npm run harness:list`; `npm run harness:moonbit` | `test` |
+| P0.5 | done | `tools/harness/README.md` | P0.1-P0.4 | runner contract, commands, and reference-build expectations are documented | doc review | `docs` |
 
 Phase 0 notes:
 

@@ -10,7 +10,8 @@ const defaults = {
   cases: path.join(toolsDir, 'cases/headless-basic.json'),
   snapshot: path.join(toolsDir, 'snapshots/headless-basic.snap.json'),
   referenceCmd: `${JSON.stringify(process.execPath)} ${JSON.stringify(path.join(toolsDir, 'reference-xterm.mjs'))}`,
-  implementationCmd: process.env.MOONBIT_XTERM_SNAPSHOT_CMD
+  implementationCmd: process.env.MOONBIT_XTERM_SNAPSHOT_CMD ??
+    `${JSON.stringify(process.execPath)} ${JSON.stringify(path.join(toolsDir, 'moonbit-terminal.mjs'))}`
 };
 
 async function main() {
@@ -55,6 +56,16 @@ async function main() {
     return;
   }
 
+  if (args.implementationOnly) {
+    const snapshots = await runCases(implementationCmd, suite.cases);
+    console.log(JSON.stringify({
+      suite: suite.name,
+      source: 'moonbit',
+      snapshots
+    }, null, 2));
+    return;
+  }
+
   if (!implementationCmd) {
     throw new Error([
       'No implementation command configured.',
@@ -92,6 +103,9 @@ function parseArgs(argv) {
       case '--reference-only':
         args.referenceOnly = true;
         break;
+      case '--implementation-only':
+        args.implementationOnly = true;
+        break;
       case '--list':
         args.list = true;
         break;
@@ -121,6 +135,7 @@ function printHelp() {
     'Options:',
     '  --list                         List case names',
     '  --reference-only               Run reference snapshots and print JSON',
+    '  --implementation-only          Run MoonBit snapshots and print JSON',
     '  --update                       Write expected snapshots from reference',
     '  --cases <path>                 Case suite path',
     '  --snapshot <path>              Expected snapshot path',
@@ -201,6 +216,9 @@ function runSnapshotCommand(command, testCase) {
 
 function compareSnapshots(expected, actual) {
   const expectedByCase = new Map(expected.map(snapshot => [snapshot.case, snapshot]));
+  if (expected.length !== actual.length) {
+    throw new Error(`Snapshot count mismatch: expected ${expected.length}, got ${actual.length}`);
+  }
   for (const snapshot of actual) {
     const expectedSnapshot = expectedByCase.get(snapshot.case);
     if (!expectedSnapshot) {
