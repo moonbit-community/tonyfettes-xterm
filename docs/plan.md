@@ -252,13 +252,25 @@ Phase 6 notes:
 ### Phase 7: Compatibility Harness
 
 Gate: after Phase 6
-Status: deferred
+Status: done
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P7.1 | deferred | exact snapshot adapter | Phase 6 | MoonBit snapshots are derived from real terminal state and match the reference schema | `moon check`; `moon test`; `npm run harness:check`; `npm run harness:list` | `test(harness)` |
-| P7.2 | deferred | headless fixture comparison | P7.1 | representative headless fixtures compare against xterm.js reference snapshots | `npm run harness:test`; `moon check`; `moon test` | `test(harness)` |
-| P7.3 | deferred | compatibility expansion | P7.2 | DEC modes, OSC, device status, charset handling, mouse protocol, kitty keyboard, and DECRQSS are covered by compatibility cases | `npm run harness:test`; `moon check`; `moon test` | `test(harness)` |
+| P7.1 | done | exact snapshot adapter | Phase 6 | MoonBit snapshots are derived from real terminal state and match the reference schema | `moon check`; `moon test`; `npm run harness:check`; `npm run harness:list` | `test(harness)` |
+| P7.2 | done | headless fixture comparison | P7.1 | representative headless fixtures compare against xterm.js reference snapshots | `npm run harness:test`; `moon check`; `moon test` | `test(harness)` |
+| P7.3 | done | supported compatibility expansion | P7.2 | supported headless features have compatibility cases: UTF-8 bytes, CSI cursor flow, SGR text flow, DEC modes, OSC title, bell, input data, alternate buffer, scroll API, and clear | `npm run harness:test`; `moon check`; `moon test` | `test(harness)` |
+
+Phase 7 notes:
+
+- The MoonBit harness adapter now snapshots through `src/headless` public API
+  instead of the lower-level terminal text helper.
+- The shared snapshot schema includes screen text, viewport lines, active buffer
+  metadata, public modes, and selected public events.
+- The current compatibility suite has 13 headless cases and compares cleanly
+  against the built xterm.js headless reference.
+- Device status reports, charset handling, mouse protocol reporting, kitty
+  keyboard protocol, and DECRQSS remain later core/input compatibility work
+  before they can become passing harness cases.
 
 ### Later Browser Work
 

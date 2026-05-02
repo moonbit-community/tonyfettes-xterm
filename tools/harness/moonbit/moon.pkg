@@ -1,6 +1,7 @@
 import {
-  "feihaoxiang/xterm/src/terminal" @terminal,
+  "feihaoxiang/xterm/src/headless" @headless,
   "moonbitlang/core/env" @env,
+  "moonbitlang/core/json",
   "moonbitlang/core/string" @string,
 }
 

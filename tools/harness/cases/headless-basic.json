@@ -8,7 +8,7 @@
         "cols": 10,
         "rows": 3
       },
-      "writes": [
+      "steps": [
         "foo"
       ]
     },
@@ -19,7 +19,7 @@
         "cols": 5,
         "rows": 3
       },
-      "writes": [
+      "steps": [
         "foo\r\nbar"
       ]
     },
@@ -30,7 +30,7 @@
         "cols": 5,
         "rows": 3
       },
-      "writes": [
+      "steps": [
         "ab\bC"
       ]
     },
@@ -41,7 +41,7 @@
         "cols": 3,
         "rows": 2
       },
-      "writes": [
+      "steps": [
         "abcde"
       ]
     },
@@ -53,8 +53,109 @@
         "rows": 3,
         "scrollback": 10
       },
-      "writes": [
+      "steps": [
         "one\r\ntwo\r\nthree\r\nfour"
+      ]
+    },
+    {
+      "name": "utf8 bytes and wide cells",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 10,
+        "rows": 3
+      },
+      "steps": [
+        { "bytes": [102, 111, 111] },
+        { "bytes": [98, 97, 114] },
+        { "bytes": [230, 150, 135] }
+      ]
+    },
+    {
+      "name": "writeln bytes",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 8,
+        "rows": 4
+      },
+      "steps": [
+        { "writelnBytes": [102, 111, 111] },
+        { "writelnBytes": [98, 97, 114] },
+        { "writelnBytes": [230, 150, 135] }
+      ]
+    },
+    {
+      "name": "csi cursor and sgr",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 6,
+        "rows": 3
+      },
+      "steps": [
+        "abcd\u001b[2DXY",
+        "\u001b[2;1H\u001b[31mzz\u001b[0m"
+      ]
+    },
+    {
+      "name": "alternate buffer",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 5,
+        "rows": 3
+      },
+      "steps": [
+        "norm ",
+        "\u001b[?47h\r",
+        "alt  "
+      ]
+    },
+    {
+      "name": "dec modes osc and bell",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 8,
+        "rows": 3
+      },
+      "steps": [
+        "\u001b[4h\u001b[?1;6;45;66;1003;1004;2004h\u001b[?7l",
+        "\u001b]2;moon\u0007",
+        "\u0007"
+      ]
+    },
+    {
+      "name": "input data event",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 8,
+        "rows": 3
+      },
+      "steps": [
+        { "input": "kbd" }
+      ]
+    },
+    {
+      "name": "scroll api viewport",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 8,
+        "rows": 3,
+        "scrollback": 10
+      },
+      "steps": [
+        "one\r\ntwo\r\nthree\r\nfour",
+        { "scrollToTop": true }
+      ]
+    },
+    {
+      "name": "clear keeps current line",
+      "options": {
+        "allowProposedApi": true,
+        "cols": 8,
+        "rows": 5,
+        "scrollback": 10
+      },
+      "steps": [
+        "\n\rtest0\n\rtest1\n\rtest2\n\rtest3\n\rtest4\n\rtest5\n\rtest6\n\rtest7\n\rtest8\n\rtest9",
+        { "clear": true }
       ]
     }
   ]

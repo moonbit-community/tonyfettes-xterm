@@ -1,6 +1,6 @@
 # Headless Compatibility Harness
 
-This starter harness compares serialized terminal text state from two
+This harness compares serialized headless terminal state from two
 implementations:
 
 - reference: xterm.js headless from `reference/xterm.js`
@@ -9,9 +9,10 @@ implementations:
 It is intentionally command-based so MoonBit internals can change without
 rewriting the harness.
 
-The current fixture set is deliberately small. It only covers behavior already
-present in the MoonBit headless path: printable ASCII, CR, LF, BS, wrapping, and
-bottom-row scroll.
+The fixture set covers behavior currently present in the MoonBit headless path:
+printable text, UTF-8 byte writes, CR/LF/BS, wrapping, scrollback, CSI cursor
+movement, SGR text flow, alternate buffer switching, DEC modes, OSC title
+events, bell events, input data events, scroll APIs, and clear.
 
 ## Case Format
 
@@ -19,16 +20,44 @@ Cases live under `tools/harness/cases/`. Each case has:
 
 - `name`: stable test name
 - `options`: terminal constructor options
-- `writes`: ordered input chunks
+- `steps`: ordered operations
 
-Each write can be a string or an object:
+Each step can be a string write or an object:
 
 ```json
 { "text": "hello" }
 ```
 
-`line`, byte writes, SGR, CSI, UTF-8 decoding, CJK width, alternate buffer, and
-DOM behavior are deferred until the parser/input work supports them.
+Supported object steps:
+
+```json
+{ "bytes": [230, 150, 135] }
+{ "writeln": "hello" }
+{ "writelnBytes": [102, 111, 111] }
+{ "input": "kbd" }
+{ "resize": { "cols": 10, "rows": 5 } }
+{ "scrollLines": -1 }
+{ "scrollPages": 1 }
+{ "scrollToLine": 0 }
+{ "scrollToTop": true }
+{ "scrollToBottom": true }
+{ "clear": true }
+{ "reset": true }
+```
+
+The adapters also accept the older `writes` array for compatibility with the
+starter fixtures.
+
+## Snapshot Format
+
+Each adapter reads one case JSON object from stdin and writes one snapshot JSON
+object to stdout:
+
+- `case`, `cols`, `rows`
+- `screen` and `lines`
+- `buffer`: active buffer type, cursor, viewport, base, and backing length
+- `modes`: public headless mode snapshot
+- `events`: title events, data events, and bell count
 
 ## Commands
 
