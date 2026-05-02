@@ -1,12 +1,15 @@
 # Headless Compatibility Harness
 
-This harness compares serialized terminal state from two implementations:
+This deferred harness compares serialized terminal state from two implementations:
 
 - reference: xterm.js headless from `reference/xterm.js`
-- implementation: the MoonBit terminal snapshot command
+- implementation: a future MoonBit terminal snapshot command
 
 It is intentionally command-based so MoonBit internals can change without
 rewriting the harness.
+
+The harness is parked until the MoonBit headless core has real terminal state.
+Do not add placeholder snapshot commands just to make this comparison run.
 
 ## Case Format
 
@@ -41,10 +44,10 @@ npm run harness:update
 This command writes snapshots under `tools/harness/snapshots/`. It does not
 install dependencies or build `reference/xterm.js`.
 
-Run comparison against a MoonBit implementation command:
+Run comparison against a MoonBit implementation command once that command exists:
 
 ```sh
-MOONBIT_XTERM_SNAPSHOT_CMD='moon run src/tools/snapshot' npm run harness:test
+MOONBIT_XTERM_SNAPSHOT_CMD='<future snapshot command>' npm run harness:test
 ```
 
 The implementation command must read one case JSON object from stdin and write
