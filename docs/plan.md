@@ -221,7 +221,7 @@ Phase 5 notes:
 ### Phase 6: Headless API
 
 Gate: after Phase 5
-Status: todo
+Status: done
 
 Reference files:
 
@@ -231,11 +231,23 @@ Reference files:
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P6.1 | todo | terminal construction and options | Phase 5 | rows, cols, options, modes, and reset defaults are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
-| P6.2 | todo | write handling | P6.1 | `write`, `writeln`, and bytes input are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
-| P6.3 | todo | public buffer views | P6.2 | public buffer access is covered by API tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
-| P6.4 | todo | parser hook API | P6.3 | CSI, OSC, DCS, ESC, and APC custom handlers have public API tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
-| P6.5 | todo | event subscription | P6.4 | data, binary, cursor, line feed, render, resize, scroll, title, and write parsed events are tested | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
+| P6.1 | done | terminal construction and options | Phase 5 | rows, cols, options, modes, and reset defaults are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
+| P6.2 | done | write handling | P6.1 | `write`, `writeln`, and bytes input are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
+| P6.3 | done | public buffer views | P6.2 | public buffer access is covered by API tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
+| P6.4 | done | parser hook API | P6.3 | CSI, OSC, DCS, ESC, and APC custom handlers have public API tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
+| P6.5 | done | event subscription | P6.4 | data, binary, cursor, line feed, render, resize, scroll, title, and write parsed events are tested | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(headless)` |
+
+Phase 6 notes:
+
+- `src/headless` now exposes a public Terminal API over the parser-backed core:
+  construction/options, modes, write/writeln string and byte input, buffer
+  views, parser hook registration, scrolling, clear, reset, and disposal.
+- Headless events cover data, cursor movement, line feed, render, resize,
+  scroll, title changes, and write parsed notifications. `on_binary` is exposed
+  as a subscription surface; keyboard and mouse producers for binary data are
+  outside the current headless scope.
+- `src/terminal` now owns core mode state and core event emitters needed by the
+  headless facade.
 
 ### Phase 7: Compatibility Harness
 

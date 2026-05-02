@@ -2,5 +2,9 @@ import {
   "feihaoxiang/xterm/src/common" @common,
   "feihaoxiang/xterm/src/common/buffer" @buffer,
   "feihaoxiang/xterm/src/common/parser" @parser,
-  "moonbitlang/core/encoding/utf8" @utf8,
+  "feihaoxiang/xterm/src/terminal" @core,
 }
+
+import {
+  "moonbitlang/core/encoding/utf8" @utf8,
+} for "test"

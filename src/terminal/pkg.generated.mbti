@@ -2,7 +2,9 @@
 package "feihaoxiang/xterm/src/terminal"
 
 import {
+  "feihaoxiang/xterm/src/common",
   "feihaoxiang/xterm/src/common/buffer",
+  "feihaoxiang/xterm/src/common/parser",
 }
 
 // Values
@@ -11,12 +13,43 @@ import {
 
 // Types and methods
 type Terminal
+pub fn Terminal::application_cursor_keys_mode(Self) -> Bool
+pub fn Terminal::application_keypad_mode(Self) -> Bool
+pub fn Terminal::bracketed_paste_mode(Self) -> Bool
 pub fn Terminal::buffer(Self) -> @buffer.Buffer
 pub fn Terminal::buffers(Self) -> @buffer.BufferSet
+pub fn Terminal::clear(Self) -> Unit
+pub fn Terminal::cols(Self) -> Int
 pub fn Terminal::cursor_x(Self) -> Int
 pub fn Terminal::cursor_y(Self) -> Int
+pub fn Terminal::dispose(Self) -> Unit
+pub fn Terminal::insert_mode(Self) -> Bool
+pub fn Terminal::mouse_tracking_mode(Self) -> String
 pub fn Terminal::new(Int, Int, Int) -> Self
+pub fn Terminal::on_bell(Self, (Unit) -> Unit) -> @common.Disposable
+pub fn Terminal::on_line_feed(Self, (Unit) -> Unit) -> @common.Disposable
+pub fn Terminal::on_scroll(Self, (Int) -> Unit) -> @common.Disposable
+pub fn Terminal::on_title_change(Self, (String) -> Unit) -> @common.Disposable
+pub fn Terminal::origin_mode(Self) -> Bool
+pub fn Terminal::register_apc_handler(Self, @parser.FunctionIdentifier, (String) -> Bool) -> @parser.Disposable
+pub fn Terminal::register_csi_handler(Self, @parser.FunctionIdentifier, (@parser.Params) -> Bool) -> @parser.Disposable
+pub fn Terminal::register_dcs_handler(Self, @parser.FunctionIdentifier, (String, @parser.Params) -> Bool) -> @parser.Disposable
+pub fn Terminal::register_esc_handler(Self, @parser.FunctionIdentifier, () -> Bool) -> @parser.Disposable
+pub fn Terminal::register_osc_handler(Self, Int, (String) -> Bool) -> @parser.Disposable
+pub fn Terminal::reset(Self) -> Unit
+pub fn Terminal::resize(Self, Int, Int) -> Unit
+pub fn Terminal::reverse_wraparound_mode(Self) -> Bool
+pub fn Terminal::rows(Self) -> Int
 pub fn Terminal::screen_text(Self, Bool) -> String
+pub fn Terminal::scroll_lines(Self, Int) -> Unit
+pub fn Terminal::scroll_to_bottom(Self) -> Unit
+pub fn Terminal::scroll_to_line(Self, Int) -> Unit
+pub fn Terminal::scroll_to_top(Self) -> Unit
+pub fn Terminal::send_focus_mode(Self) -> Bool
+pub fn Terminal::show_cursor(Self) -> Bool
+pub fn Terminal::synchronized_output_mode(Self) -> Bool
+pub fn Terminal::win32_input_mode(Self) -> Bool
+pub fn Terminal::wraparound_mode(Self) -> Bool
 pub fn Terminal::write(Self, String) -> Unit
 pub fn Terminal::write_utf8(Self, Bytes) -> Unit raise
 

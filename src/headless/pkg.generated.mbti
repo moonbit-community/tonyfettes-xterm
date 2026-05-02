@@ -1,0 +1,135 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "feihaoxiang/xterm/src/headless"
+
+import {
+  "feihaoxiang/xterm/src/common",
+  "feihaoxiang/xterm/src/common/parser",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+type BufferCellView
+pub fn BufferCellView::get_bg(Self) -> Int
+pub fn BufferCellView::get_chars(Self) -> String
+pub fn BufferCellView::get_code(Self) -> Int
+pub fn BufferCellView::get_fg(Self) -> Int
+pub fn BufferCellView::get_width(Self) -> Int
+
+type BufferLineView
+pub fn BufferLineView::get_cell(Self, Int) -> BufferCellView?
+pub fn BufferLineView::is_wrapped(Self) -> Bool
+pub fn BufferLineView::length(Self) -> Int
+pub fn BufferLineView::translate_to_string(Self, trim_right? : Bool, start_col? : Int, end_col? : Int) -> String
+
+type BufferNamespace
+pub fn BufferNamespace::active(Self) -> BufferView
+pub fn BufferNamespace::alternate(Self) -> BufferView
+pub fn BufferNamespace::normal(Self) -> BufferView
+
+pub(all) enum BufferType {
+  Normal
+  Alternate
+} derive(Eq, @debug.Debug)
+
+type BufferView
+pub fn BufferView::base_y(Self) -> Int
+pub fn BufferView::buffer_type(Self) -> BufferType
+pub fn BufferView::cursor_x(Self) -> Int
+pub fn BufferView::cursor_y(Self) -> Int
+pub fn BufferView::get_line(Self, Int) -> BufferLineView?
+pub fn BufferView::length(Self) -> Int
+pub fn BufferView::viewport_y(Self) -> Int
+
+pub(all) struct Modes {
+  application_cursor_keys_mode : Bool
+  application_keypad_mode : Bool
+  bracketed_paste_mode : Bool
+  insert_mode : Bool
+  mouse_tracking_mode : MouseTrackingMode
+  origin_mode : Bool
+  reverse_wraparound_mode : Bool
+  send_focus_mode : Bool
+  show_cursor : Bool
+  synchronized_output_mode : Bool
+  win32_input_mode : Bool
+  wraparound_mode : Bool
+} derive(Eq, @debug.Debug)
+
+pub(all) enum MouseTrackingMode {
+  None
+  X10
+  Vt200
+  Drag
+  Any
+} derive(Eq, @debug.Debug)
+
+type ParserApi
+pub fn ParserApi::register_apc_handler(Self, @parser.FunctionIdentifier, (String) -> Bool) -> @parser.Disposable
+pub fn ParserApi::register_csi_handler(Self, @parser.FunctionIdentifier, (@parser.Params) -> Bool) -> @parser.Disposable
+pub fn ParserApi::register_dcs_handler(Self, @parser.FunctionIdentifier, (String, @parser.Params) -> Bool) -> @parser.Disposable
+pub fn ParserApi::register_esc_handler(Self, @parser.FunctionIdentifier, () -> Bool) -> @parser.Disposable
+pub fn ParserApi::register_osc_handler(Self, Int, (String) -> Bool) -> @parser.Disposable
+
+pub(all) struct RenderEvent {
+  start : Int
+  end : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ResizeEvent {
+  cols : Int
+  rows : Int
+} derive(Eq, @debug.Debug)
+
+type Terminal
+pub fn Terminal::buffer(Self) -> BufferNamespace
+pub fn Terminal::clear(Self) -> Unit
+pub fn Terminal::cols(Self) -> Int
+pub fn Terminal::dispose(Self) -> Unit
+pub fn Terminal::input(Self, String, was_user_input? : Bool) -> Unit
+pub fn Terminal::modes(Self) -> Modes
+pub fn Terminal::new(options? : TerminalOptions) -> Self
+pub fn Terminal::on_bell(Self, (Unit) -> Unit) -> @common.Disposable
+pub fn Terminal::on_binary(Self, (String) -> Unit) -> @common.Disposable
+pub fn Terminal::on_cursor_move(Self, (Unit) -> Unit) -> @common.Disposable
+pub fn Terminal::on_data(Self, (String) -> Unit) -> @common.Disposable
+pub fn Terminal::on_line_feed(Self, (Unit) -> Unit) -> @common.Disposable
+pub fn Terminal::on_render(Self, (RenderEvent) -> Unit) -> @common.Disposable
+pub fn Terminal::on_resize(Self, (ResizeEvent) -> Unit) -> @common.Disposable
+pub fn Terminal::on_scroll(Self, (Int) -> Unit) -> @common.Disposable
+pub fn Terminal::on_title_change(Self, (String) -> Unit) -> @common.Disposable
+pub fn Terminal::on_write_parsed(Self, (Unit) -> Unit) -> @common.Disposable
+pub fn Terminal::options(Self) -> TerminalOptions
+pub fn Terminal::parser(Self) -> ParserApi
+pub fn Terminal::reset(Self) -> Unit
+pub fn Terminal::resize(Self, Int, Int) -> Unit
+pub fn Terminal::rows(Self) -> Int
+pub fn Terminal::scroll_lines(Self, Int) -> Unit
+pub fn Terminal::scroll_pages(Self, Int) -> Unit
+pub fn Terminal::scroll_to_bottom(Self) -> Unit
+pub fn Terminal::scroll_to_line(Self, Int) -> Unit
+pub fn Terminal::scroll_to_top(Self) -> Unit
+pub fn Terminal::set_options(Self, TerminalOptions) -> Unit
+pub fn Terminal::write(Self, String, callback? : () -> Unit) -> Unit
+pub fn Terminal::write_bytes(Self, Bytes, callback? : () -> Unit) -> Unit raise
+pub fn Terminal::writeln(Self, String, callback? : () -> Unit) -> Unit
+pub fn Terminal::writeln_bytes(Self, Bytes, callback? : () -> Unit) -> Unit raise
+
+pub(all) struct TerminalOptions {
+  cols : Int
+  rows : Int
+  scrollback : Int
+  allow_proposed_api : Bool
+  font_size : Int
+  font_family : String
+  line_height : Int
+  cursor_width : Int
+} derive(Eq, @debug.Debug)
+pub fn TerminalOptions::new(cols? : Int, rows? : Int, scrollback? : Int, allow_proposed_api? : Bool, font_size? : Int, font_family? : String, line_height? : Int, cursor_width? : Int) -> Self
+
+// Type aliases
+
+// Traits

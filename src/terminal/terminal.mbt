@@ -4,6 +4,21 @@ struct Terminal {
   parser : @parser.EscapeSequenceParser
   current_attr : @buffer.AttributeData
   mut insert_mode : Bool
+  mut application_cursor_keys_mode : Bool
+  mut application_keypad_mode : Bool
+  mut bracketed_paste_mode : Bool
+  mut mouse_tracking_mode : String
+  mut origin_mode : Bool
+  mut reverse_wraparound_mode : Bool
+  mut send_focus_mode : Bool
+  mut show_cursor : Bool
+  mut synchronized_output_mode : Bool
+  mut win32_input_mode : Bool
+  mut wraparound_mode : Bool
+  on_bell_emitter : @common.Emitter[Unit]
+  on_line_feed_emitter : @common.Emitter[Unit]
+  on_scroll_emitter : @common.Emitter[Int]
+  on_title_change_emitter : @common.Emitter[String]
 }
 
 ///|
@@ -13,6 +28,21 @@ pub fn Terminal::new(cols : Int, rows : Int, scrollback : Int) -> Terminal {
     parser: @parser.EscapeSequenceParser::new(),
     current_attr: @buffer.AttributeData::new(),
     insert_mode: false,
+    application_cursor_keys_mode: false,
+    application_keypad_mode: false,
+    bracketed_paste_mode: false,
+    mouse_tracking_mode: "none",
+    origin_mode: false,
+    reverse_wraparound_mode: false,
+    send_focus_mode: false,
+    show_cursor: true,
+    synchronized_output_mode: false,
+    win32_input_mode: false,
+    wraparound_mode: true,
+    on_bell_emitter: @common.Emitter::new(),
+    on_line_feed_emitter: @common.Emitter::new(),
+    on_scroll_emitter: @common.Emitter::new(),
+    on_title_change_emitter: @common.Emitter::new(),
   }
   terminal.install_input_handlers()
   terminal
@@ -36,6 +66,108 @@ pub fn Terminal::cursor_x(self : Terminal) -> Int {
 ///|
 pub fn Terminal::cursor_y(self : Terminal) -> Int {
   self.buffer().y()
+}
+
+///|
+pub fn Terminal::cols(self : Terminal) -> Int {
+  self.buffer().cols()
+}
+
+///|
+pub fn Terminal::rows(self : Terminal) -> Int {
+  self.buffer().rows()
+}
+
+///|
+pub fn Terminal::insert_mode(self : Terminal) -> Bool {
+  self.insert_mode
+}
+
+///|
+pub fn Terminal::application_cursor_keys_mode(self : Terminal) -> Bool {
+  self.application_cursor_keys_mode
+}
+
+///|
+pub fn Terminal::application_keypad_mode(self : Terminal) -> Bool {
+  self.application_keypad_mode
+}
+
+///|
+pub fn Terminal::bracketed_paste_mode(self : Terminal) -> Bool {
+  self.bracketed_paste_mode
+}
+
+///|
+pub fn Terminal::mouse_tracking_mode(self : Terminal) -> String {
+  self.mouse_tracking_mode
+}
+
+///|
+pub fn Terminal::origin_mode(self : Terminal) -> Bool {
+  self.origin_mode
+}
+
+///|
+pub fn Terminal::reverse_wraparound_mode(self : Terminal) -> Bool {
+  self.reverse_wraparound_mode
+}
+
+///|
+pub fn Terminal::send_focus_mode(self : Terminal) -> Bool {
+  self.send_focus_mode
+}
+
+///|
+pub fn Terminal::show_cursor(self : Terminal) -> Bool {
+  self.show_cursor
+}
+
+///|
+pub fn Terminal::synchronized_output_mode(self : Terminal) -> Bool {
+  self.synchronized_output_mode
+}
+
+///|
+pub fn Terminal::win32_input_mode(self : Terminal) -> Bool {
+  self.win32_input_mode
+}
+
+///|
+pub fn Terminal::wraparound_mode(self : Terminal) -> Bool {
+  self.wraparound_mode
+}
+
+///|
+pub fn Terminal::on_bell(
+  self : Terminal,
+  listener : (Unit) -> Unit,
+) -> @common.Disposable {
+  self.on_bell_emitter.event(listener)
+}
+
+///|
+pub fn Terminal::on_line_feed(
+  self : Terminal,
+  listener : (Unit) -> Unit,
+) -> @common.Disposable {
+  self.on_line_feed_emitter.event(listener)
+}
+
+///|
+pub fn Terminal::on_scroll(
+  self : Terminal,
+  listener : (Int) -> Unit,
+) -> @common.Disposable {
+  self.on_scroll_emitter.event(listener)
+}
+
+///|
+pub fn Terminal::on_title_change(
+  self : Terminal,
+  listener : (String) -> Unit,
+) -> @common.Disposable {
+  self.on_title_change_emitter.event(listener)
 }
 
 ///|
@@ -84,7 +216,10 @@ fn csi_id_with_prefix(
 fn Terminal::install_input_handlers(self : Terminal) -> Unit {
   let parser = self.parser
   parser.set_print_handler(fn(data) { self.print(data) })
-  parser.set_execute_handler("\u{0007}", fn(_) { true })
+  parser.set_execute_handler("\u{0007}", fn(_) {
+    self.bell()
+    true
+  })
   parser.set_execute_handler("\u{0008}", fn(_) {
     self.backspace()
     true
@@ -249,9 +384,39 @@ fn Terminal::install_input_handlers(self : Terminal) -> Unit {
     true
   })
   |> ignore
-  parser.register_csi_handler(csi_id_with_prefix("?", "h"), fn(_) { true })
+  parser.register_csi_handler(csi_id_with_prefix("?", "h"), fn(params) {
+    self.set_private_mode(params, true)
+    true
+  })
   |> ignore
-  parser.register_csi_handler(csi_id_with_prefix("?", "l"), fn(_) { true })
+  parser.register_csi_handler(csi_id_with_prefix("?", "l"), fn(params) {
+    self.set_private_mode(params, false)
+    true
+  })
+  |> ignore
+  parser.register_osc_handler(
+    0,
+    @parser.OscHandler::new(fn(data) {
+      self.set_title(data)
+      true
+    }),
+  )
+  |> ignore
+  parser.register_osc_handler(
+    1,
+    @parser.OscHandler::new(fn(data) {
+      self.set_title(data)
+      true
+    }),
+  )
+  |> ignore
+  parser.register_osc_handler(
+    2,
+    @parser.OscHandler::new(fn(data) {
+      self.set_title(data)
+      true
+    }),
+  )
   |> ignore
 }
 
@@ -301,6 +466,7 @@ fn Terminal::line_feed_wrapped(self : Terminal, is_wrapped : Bool) -> Unit {
     Some(line) => line.set_is_wrapped(is_wrapped)
     None => ()
   }
+  self.on_line_feed_emitter.fire(())
 }
 
 ///|
@@ -550,6 +716,7 @@ fn Terminal::is_full_scroll_region(self : Terminal) -> Bool {
 fn Terminal::scroll_up(self : Terminal, count : Int) -> Unit {
   let buffer = self.buffer()
   for _i = 0; _i < count; _i = _i + 1 {
+    let old_ydisp = buffer.ydisp()
     if self.is_full_scroll_region() {
       buffer.scroll_up_one(Some(self.current_attr))
     } else {
@@ -558,6 +725,9 @@ fn Terminal::scroll_up(self : Terminal, count : Int) -> Unit {
       buffer
       .lines()
       .splice(base + buffer.scroll_bottom(), 0, [self.blank_line()])
+    }
+    if buffer.ydisp() != old_ydisp {
+      self.on_scroll_emitter.fire(buffer.ydisp())
     }
   }
 }
@@ -604,6 +774,65 @@ fn Terminal::set_mode(
       self.insert_mode = enabled
     }
   }
+}
+
+///|
+fn Terminal::set_private_mode(
+  self : Terminal,
+  params : @parser.Params,
+  enabled : Bool,
+) -> Unit {
+  for i = 0; i < params.length(); i = i + 1 {
+    match params.param_at(i) {
+      1 => self.application_cursor_keys_mode = enabled
+      6 => self.origin_mode = enabled
+      7 => self.wraparound_mode = enabled
+      9 => self.mouse_tracking_mode = if enabled { "x10" } else { "none" }
+      25 => self.show_cursor = enabled
+      45 => self.reverse_wraparound_mode = enabled
+      47 | 1047 | 1049 =>
+        if enabled {
+          self.buffers.activate_alt_buffer(Some(self.current_attr))
+        } else {
+          self.buffers.activate_normal_buffer()
+        }
+      66 => self.application_keypad_mode = enabled
+      1000 => self.mouse_tracking_mode = if enabled { "vt200" } else { "none" }
+      1002 => self.mouse_tracking_mode = if enabled { "drag" } else { "none" }
+      1003 => self.mouse_tracking_mode = if enabled { "any" } else { "none" }
+      1004 => self.send_focus_mode = enabled
+      2004 => self.bracketed_paste_mode = enabled
+      2026 => self.synchronized_output_mode = enabled
+      9001 => self.win32_input_mode = enabled
+      _ => ()
+    }
+  }
+}
+
+///|
+fn Terminal::bell(self : Terminal) -> Unit {
+  self.on_bell_emitter.fire(())
+}
+
+///|
+fn Terminal::set_title(self : Terminal, title : String) -> Unit {
+  self.on_title_change_emitter.fire(title)
+}
+
+///|
+fn Terminal::reset_modes(self : Terminal) -> Unit {
+  self.insert_mode = false
+  self.application_cursor_keys_mode = false
+  self.application_keypad_mode = false
+  self.bracketed_paste_mode = false
+  self.mouse_tracking_mode = "none"
+  self.origin_mode = false
+  self.reverse_wraparound_mode = false
+  self.send_focus_mode = false
+  self.show_cursor = true
+  self.synchronized_output_mode = false
+  self.win32_input_mode = false
+  self.wraparound_mode = true
 }
 
 ///|
@@ -773,6 +1002,136 @@ fn Terminal::char_attributes(self : Terminal, params : @parser.Params) -> Unit {
     }
     i += 1
   }
+}
+
+///|
+pub fn Terminal::resize(self : Terminal, cols : Int, rows : Int) -> Unit {
+  self.buffers.resize(
+    if cols < 1 {
+      1
+    } else {
+      cols
+    },
+    if rows < 1 {
+      1
+    } else {
+      rows
+    },
+  )
+}
+
+///|
+pub fn Terminal::scroll_lines(self : Terminal, amount : Int) -> Unit {
+  let buffer = self.buffer()
+  let next = clamp(buffer.ydisp() + amount, 0, buffer.ybase())
+  if next != buffer.ydisp() {
+    buffer.set_ydisp(next)
+    self.on_scroll_emitter.fire(next)
+  }
+}
+
+///|
+pub fn Terminal::scroll_to_top(self : Terminal) -> Unit {
+  self.scroll_lines(-self.buffer().ydisp())
+}
+
+///|
+pub fn Terminal::scroll_to_bottom(self : Terminal) -> Unit {
+  let buffer = self.buffer()
+  self.scroll_lines(buffer.ybase() - buffer.ydisp())
+}
+
+///|
+pub fn Terminal::scroll_to_line(self : Terminal, line : Int) -> Unit {
+  let buffer = self.buffer()
+  let target = clamp(line, 0, buffer.ybase())
+  self.scroll_lines(target - buffer.ydisp())
+}
+
+///|
+pub fn Terminal::clear(self : Terminal) -> Unit {
+  let buffer = self.buffer()
+  if buffer.ybase() == 0 && buffer.y() == 0 {
+    return
+  }
+  let current = buffer.lines().get(buffer.ybase() + buffer.y())
+  buffer.lines().set_length(0)
+  match current {
+    Some(line) => buffer.lines().push(line.clone())
+    None =>
+      buffer.lines().push(buffer.get_blank_line(Some(self.current_attr), false))
+  }
+  while buffer.lines().length() < buffer.rows() {
+    buffer.lines().push(buffer.get_blank_line(Some(self.current_attr), false))
+  }
+  buffer.set_ybase(0)
+  buffer.set_ydisp(0)
+  buffer.set_y(0)
+  self.on_scroll_emitter.fire(0)
+}
+
+///|
+pub fn Terminal::reset(self : Terminal) -> Unit {
+  self.parser.reset()
+  self.buffers.activate_normal_buffer()
+  self.buffers.normal().clear()
+  self.buffers.normal().fill_viewport_rows(None)
+  self.buffers.alt().clear()
+  self.reset_attrs()
+  self.reset_modes()
+}
+
+///|
+pub fn Terminal::dispose(self : Terminal) -> Unit {
+  self.on_bell_emitter.dispose()
+  self.on_line_feed_emitter.dispose()
+  self.on_scroll_emitter.dispose()
+  self.on_title_change_emitter.dispose()
+}
+
+///|
+pub fn Terminal::register_csi_handler(
+  self : Terminal,
+  id : @parser.FunctionIdentifier,
+  handler : (@parser.Params) -> Bool,
+) -> @parser.Disposable {
+  self.parser.register_csi_handler(id, handler)
+}
+
+///|
+pub fn Terminal::register_esc_handler(
+  self : Terminal,
+  id : @parser.FunctionIdentifier,
+  handler : () -> Bool,
+) -> @parser.Disposable {
+  self.parser.register_esc_handler(id, handler)
+}
+
+///|
+pub fn Terminal::register_osc_handler(
+  self : Terminal,
+  ident : Int,
+  handler : (String) -> Bool,
+) -> @parser.Disposable {
+  self.parser.register_osc_handler(ident, @parser.OscHandler::new(handler))
+}
+
+///|
+pub fn Terminal::register_dcs_handler(
+  self : Terminal,
+  id : @parser.FunctionIdentifier,
+  handler : (String, @parser.Params) -> Bool,
+) -> @parser.Disposable {
+  self.parser.register_dcs_handler(id, @parser.DcsHandler::new(handler))
+}
+
+///|
+pub fn Terminal::register_apc_handler(
+  self : Terminal,
+  id : @parser.FunctionIdentifier,
+  handler : (String) -> Bool,
+) -> @parser.Disposable {
+  self.parser.register_apc_handler(id, @parser.ApcHandler::new(handler))
 }
 
 ///|
