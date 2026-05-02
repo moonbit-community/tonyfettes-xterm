@@ -1,3 +1,5 @@
 import {
   "feihaoxiang/xterm/src/common/buffer" @buffer,
+  "feihaoxiang/xterm/src/common/parser" @parser,
+  "moonbitlang/core/encoding/utf8" @utf8,
 }

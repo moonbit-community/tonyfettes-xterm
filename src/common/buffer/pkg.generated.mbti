@@ -136,6 +136,8 @@ pub fn Buffer::rows(Self) -> Int
 pub fn Buffer::scroll_bottom(Self) -> Int
 pub fn Buffer::scroll_top(Self) -> Int
 pub fn Buffer::scroll_up_one(Self, AttributeData?) -> Unit
+pub fn Buffer::set_scroll_bottom(Self, Int) -> Unit
+pub fn Buffer::set_scroll_top(Self, Int) -> Unit
 pub fn Buffer::set_x(Self, Int) -> Unit
 pub fn Buffer::set_y(Self, Int) -> Unit
 pub fn Buffer::set_ybase(Self, Int) -> Unit

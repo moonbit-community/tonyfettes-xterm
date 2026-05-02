@@ -192,7 +192,7 @@ Phase 4 notes:
 ### Phase 5: Input Handler MVP
 
 Gate: after Phase 3 and Phase 4
-Status: todo
+Status: done
 
 Reference file:
 
@@ -200,12 +200,20 @@ Reference file:
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P5.1 | todo | printable text | Phase 3, Phase 4 | ASCII, UTF-8 bytes, CJK width, and simple wrapping are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
-| P5.2 | todo | C0 controls | P5.1 | BEL, LF, VT, FF, CR, BS, HT, SO, and SI behavior is covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
-| P5.3 | todo | cursor movement | P5.2 | cursor movement CSI sequences are tested against buffer state | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
-| P5.4 | todo | erase and edit operations | P5.3 | erase display/line and insert/delete chars/lines are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
-| P5.5 | todo | scroll region and basic scroll | P5.4 | scrollback and viewport behavior are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
-| P5.6 | todo | SGR basics | P5.5 | foreground/background and common style attrs are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+| P5.1 | done | printable text | Phase 3, Phase 4 | ASCII, UTF-8 bytes, CJK width, and simple wrapping are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+| P5.2 | done | C0 controls | P5.1 | BEL, LF, VT, FF, CR, BS, HT, SO, and SI behavior is covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+| P5.3 | done | cursor movement | P5.2 | cursor movement CSI sequences are tested against buffer state | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+| P5.4 | done | erase and edit operations | P5.3 | erase display/line and insert/delete chars/lines are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+| P5.5 | done | scroll region and basic scroll | P5.4 | scrollback and viewport behavior are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+| P5.6 | done | SGR basics | P5.5 | foreground/background and common style attrs are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(input)` |
+
+Phase 5 notes:
+
+- `src/terminal` now routes writes through `EscapeSequenceParser`.
+- The MVP input path covers printable Unicode, UTF-8 byte input, C0 controls,
+  cursor movement, erase/edit operations, scroll regions, and SGR basics.
+- DEC private modes remain mostly stubbed; insert mode is supported through
+  `CSI 4 h/l`.
 
 ### Phase 6: Headless API
 

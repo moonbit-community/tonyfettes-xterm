@@ -122,8 +122,18 @@ pub fn Buffer::scroll_bottom(self : Buffer) -> Int {
 }
 
 ///|
+pub fn Buffer::set_scroll_bottom(self : Buffer, value : Int) -> Unit {
+  self.scroll_bottom = value
+}
+
+///|
 pub fn Buffer::scroll_top(self : Buffer) -> Int {
   self.scroll_top
+}
+
+///|
+pub fn Buffer::set_scroll_top(self : Buffer, value : Int) -> Unit {
+  self.scroll_top = value
 }
 
 ///|

@@ -18,6 +18,7 @@ pub fn Terminal::cursor_y(Self) -> Int
 pub fn Terminal::new(Int, Int, Int) -> Self
 pub fn Terminal::screen_text(Self, Bool) -> String
 pub fn Terminal::write(Self, String) -> Unit
+pub fn Terminal::write_utf8(Self, Bytes) -> Unit raise
 
 // Type aliases
 
