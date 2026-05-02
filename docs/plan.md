@@ -34,6 +34,9 @@ integration.
   - `moon test`
   - `moon fmt`
   - `moon info`
+  - `moon coverage analyze -- -f summary`
+- Every implementation phase closeout must include the current coverage
+  summary in the handoff, even when coverage does not gate the commit.
 - Coverage workflow tasks require:
   - `moon coverage analyze -- -f summary`
   - at least one non-test MoonBit source file in the target package

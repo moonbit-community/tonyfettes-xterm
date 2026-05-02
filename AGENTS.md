@@ -45,4 +45,6 @@
   - `moon test`
   - `moon fmt`
   - `moon info`
+- At the end of every implementation phase, also run and report:
+  - `moon coverage analyze -- -f summary`
 - Review `.mbti` output after `moon info` and confirm public API changes are intentional.

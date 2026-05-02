@@ -46,6 +46,16 @@ test "Params reset and from_array" {
   guard params.to_array() == [Param(1)] else {
     fail("params should be reusable after reset")
   }
+
+  let empty = Params::from_array([])
+  guard empty.to_array() == [] else {
+    fail("from_array should allow empty arrays")
+  }
+
+  let leading_subparams = Params::from_array([SubParams([1]), Param(2)])
+  guard leading_subparams.to_array() == [Param(2)] else {
+    fail("from_array should skip leading subparams without an owner")
+  }
 }
 
 ///|
@@ -102,6 +112,10 @@ test "Params parse zdm defaults and typical SGR styles" {
 ///|
 test "Params restrictions and clamp" {
   let params = Params::new(max_length=3, max_subparams_length=3)
+  guard params.max_length() == 3 && params.max_subparams_length() == 3 else {
+    fail("constructor should retain configured max sizes")
+  }
+
   params.parse_zdm(["1;2;3;4;5"])
   guard params.to_array() == [Param(1), Param(2), Param(3)] else {
     fail("overlong params should be ignored")
@@ -121,6 +135,11 @@ test "Params restrictions and clamp" {
   guard params.to_array() == [Param(0), SubParams([0x7FFFFFFF])] else {
     fail("subparams should clamp to positive int32 max")
   }
+}
+
+///|
+test "panic Params rejects too many subparams" {
+  ignore(Params::new(max_subparams_length=257))
 }
 
 ///|
