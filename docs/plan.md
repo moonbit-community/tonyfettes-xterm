@@ -109,7 +109,7 @@ Phase 1 notes:
 ### Phase 2: Unit Test And Coverage Workflow
 
 Gate: serial after Phase 1
-Status: active
+Status: done
 
 Reference files:
 
@@ -119,16 +119,15 @@ Reference files:
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P2.1 | blocked | coverage command baseline | first non-test MoonBit source file | `moon coverage analyze -- -f summary` is verified on a package with source coverage data | `moon coverage analyze -- -f summary` | `test` |
-| P2.2 | todo | unit-test port inventory | P2.1 | xterm.js unit tests are grouped into MoonBit package targets | doc review | `docs` |
-| P2.3 | todo | first pure unit test port | P2.2 | one pure xterm.js unit-test file is represented as MoonBit tests before implementation work expands | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `test` |
+| P2.1 | done | coverage command baseline | first non-test MoonBit source file | `moon coverage analyze -- -f summary` is verified on a package with source coverage data | `moon coverage analyze -- -f summary` | `test` |
+| P2.2 | done | unit-test port inventory | Phase 1 | xterm.js unit tests are grouped into MoonBit package targets | doc review | `docs` |
+| P2.3 | done | first pure unit test port | P2.2 | one pure xterm.js unit-test file is represented as MoonBit tests before implementation work expands | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `test` |
 
 Phase 2 notes:
 
-- The current skeleton has only a smoke test and no non-test MoonBit source,
-  so coverage has no source data to summarize yet.
-- Do not add fake source just to satisfy coverage. Verify coverage on the first
-  real unit-tested module.
+- First pure port: `reference/xterm.js/src/common/Event.test.ts` to
+  `src/common/event_test.mbt`.
+- Coverage baseline: `src/common/event.mbt: 22/26`, `Total: 22/26`.
 
 ### Phase 3: Buffer Core
 

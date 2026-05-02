@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "feihaoxiang/xterm/src/common"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Disposable
+pub fn Disposable::dispose(Self) -> Unit
+
+type Emitter[T]
+pub fn[T] Emitter::dispose(Self[T]) -> Unit
+pub fn[T] Emitter::event(Self[T], (T) -> Unit) -> Disposable
+pub fn[T] Emitter::fire(Self[T], T) -> Unit
+pub fn[T] Emitter::new() -> Self[T]
+
+// Type aliases
+
+// Traits
