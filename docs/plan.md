@@ -84,14 +84,21 @@ Phase 0 notes:
 ### Phase 1: Project Skeleton
 
 Gate: serial after Phase 0
-Status: todo
+Status: active
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P1.1 | todo | `moon.mod.json` and root package setup | Phase 0 | MoonBit project exists and can run empty checks | `moon check`; `moon test`; `moon fmt`; `moon info` | `chore` |
-| P1.2 | todo | first headless package | P1.1 | initial package boundary exists for the headless core | `moon check`; `moon test`; `moon fmt`; `moon info` | `feat` |
-| P1.3 | todo | MoonBit snapshot command | P1.2 | command reads one harness case from stdin and writes snapshot JSON to stdout | `moon check`; `moon test`; `npm run harness:list` | `test` |
-| P1.4 | todo | terminal snapshot helpers | P1.3 | snapshot helpers can represent empty terminal state in the harness schema | `moon check`; `moon test`; `moon fmt`; `moon info` | `test` |
+| P1.1 | done | `moon.mod.json` and root package setup | Phase 0 | MoonBit project exists and can run empty checks | `moon check`; `moon test`; `moon fmt`; `moon info` | `chore` |
+| P1.2 | done | first headless package | P1.1 | initial package boundary exists for the headless core | `moon check`; `moon test`; `moon fmt`; `moon info` | `feat` |
+| P1.3 | active | MoonBit snapshot command | P1.2 | command writes snapshot JSON to stdout; stdin case parsing remains next | `moon check`; `moon test`; `npm run harness:list` | `test` |
+| P1.4 | done | terminal snapshot helpers | P1.3 | snapshot helpers can represent empty terminal state in the harness schema | `moon check`; `moon test`; `moon fmt`; `moon info` | `test` |
+
+Phase 1 notes:
+
+- The initial snapshot command emits a valid empty-terminal snapshot in the
+  harness schema.
+- Stdin case parsing is the remaining P1.3 work before `npm run harness:test`
+  can compare MoonBit output with reference snapshots.
 
 ### Phase 2: Buffer Core
 

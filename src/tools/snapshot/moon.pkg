@@ -1,0 +1,7 @@
+import {
+  "feihaoxiang/xterm/src/terminal",
+}
+
+options(
+  "is-main": true,
+)

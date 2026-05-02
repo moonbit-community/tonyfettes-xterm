@@ -1,0 +1,13 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "feihaoxiang/xterm/src/terminal"
+
+// Values
+pub fn empty_snapshot_json() -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
