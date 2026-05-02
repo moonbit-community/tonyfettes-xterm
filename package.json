@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "harness:check": "node --check tools/harness/run.mjs && node --check tools/harness/reference-xterm.mjs",
+    "harness:list": "node tools/harness/run.mjs --list",
+    "harness:reference": "node tools/harness/run.mjs --reference-only",
+    "harness:update": "node tools/harness/run.mjs --update",
+    "harness:test": "node tools/harness/run.mjs"
+  }
+}
