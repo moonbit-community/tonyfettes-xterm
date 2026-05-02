@@ -161,7 +161,7 @@ Phase 3 notes:
 ### Phase 4: Parser Core
 
 Gate: serial/parallel after Phase 2
-Status: todo
+Status: done
 
 Reference files:
 
@@ -173,11 +173,21 @@ Reference files:
 
 | ID | status | target | depends on | acceptance | validation | commit scope |
 |---|---|---|---|---|---|---|
-| P4.1 | todo | params and subparams | Phase 2 | parameter parsing and array conversion behavior are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
-| P4.2 | todo | VT transition table | P4.1 | table-driven state transitions are represented and unit-tested | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
-| P4.3 | todo | print and execute dispatch | P4.2 | printable and C0/C1 execute paths are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
-| P4.4 | todo | CSI and ESC dispatch | P4.3 | handler registration, fallback, prefix, intermediate, and final-byte behavior are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
-| P4.5 | todo | OSC, DCS, and APC dispatch | P4.4 | string sequence lifecycle and handler dispatch are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
+| P4.1 | done | params and subparams | Phase 2 | parameter parsing and array conversion behavior are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
+| P4.2 | done | VT transition table | P4.1 | table-driven state transitions are represented and unit-tested | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
+| P4.3 | done | print and execute dispatch | P4.2 | printable and C0/C1 execute paths are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
+| P4.4 | done | CSI and ESC dispatch | P4.3 | handler registration, fallback, prefix, intermediate, and final-byte behavior are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
+| P4.5 | done | OSC, DCS, and APC dispatch | P4.4 | string sequence lifecycle and handler dispatch are covered by unit tests | `moon check`; `moon test`; `moon fmt`; `moon info`; coverage summary | `feat(parser)` |
+
+Phase 4 notes:
+
+- `src/common/parser` now has `Params`, a VT500 transition table, the
+  synchronous escape sequence parser, and OSC/DCS/APC subparsers.
+- Tests cover xterm.js-derived params behavior, transition lookup, print and
+  execute dispatch, ESC/CSI fallback and registered handlers, plus string
+  sequence lifecycles for OSC, DCS, and APC.
+- Async parser continuation support is not modeled yet; MoonBit integration can
+  add it later if an async write path becomes necessary.
 
 ### Phase 5: Input Handler MVP
 

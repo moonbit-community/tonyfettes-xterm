@@ -1,0 +1,225 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "feihaoxiang/xterm/src/common/parser"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const ParserActionApcEnd : Int = 17
+
+pub const ParserActionApcPut : Int = 16
+
+pub const ParserActionApcStart : Int = 15
+
+pub const ParserActionClear : Int = 11
+
+pub const ParserActionCollect : Int = 9
+
+pub const ParserActionCsiDispatch : Int = 7
+
+pub const ParserActionDcsHook : Int = 12
+
+pub const ParserActionDcsPut : Int = 13
+
+pub const ParserActionDcsUnhook : Int = 14
+
+pub const ParserActionError : Int = 1
+
+pub const ParserActionEscDispatch : Int = 10
+
+pub const ParserActionExecute : Int = 3
+
+pub const ParserActionIgnore : Int = 0
+
+pub const ParserActionOscEnd : Int = 6
+
+pub const ParserActionOscPut : Int = 5
+
+pub const ParserActionOscStart : Int = 4
+
+pub const ParserActionParam : Int = 8
+
+pub const ParserActionPrint : Int = 2
+
+pub const ParserStateApcEntry : Int = 14
+
+pub const ParserStateApcIntermediate : Int = 15
+
+pub const ParserStateApcPassthrough : Int = 16
+
+pub const ParserStateCsiEntry : Int = 3
+
+pub const ParserStateCsiIgnore : Int = 6
+
+pub const ParserStateCsiIntermediate : Int = 5
+
+pub const ParserStateCsiParam : Int = 4
+
+pub const ParserStateDcsEntry : Int = 9
+
+pub const ParserStateDcsIgnore : Int = 11
+
+pub const ParserStateDcsIntermediate : Int = 12
+
+pub const ParserStateDcsParam : Int = 10
+
+pub const ParserStateDcsPassthrough : Int = 13
+
+pub const ParserStateEscape : Int = 1
+
+pub const ParserStateEscapeIntermediate : Int = 2
+
+pub const ParserStateGround : Int = 0
+
+pub const ParserStateLength : Int = 17
+
+pub const ParserStateOscString : Int = 8
+
+pub const ParserStateSosPmString : Int = 7
+
+pub fn transition_action(Int) -> Int
+
+pub fn transition_state(Int) -> Int
+
+pub fn vt500_transition_table() -> TransitionTable
+
+// Errors
+
+// Types and methods
+type ApcHandler
+pub fn ApcHandler::from_callbacks(() -> Unit, (String) -> Unit, (Bool) -> Bool) -> Self
+pub fn ApcHandler::new((String) -> Bool) -> Self
+
+type ApcParser
+pub fn ApcParser::clear_handler(Self, Int) -> Unit
+pub fn ApcParser::dispose(Self) -> Unit
+pub fn ApcParser::end(Self, Bool) -> Unit
+pub fn ApcParser::new() -> Self
+pub fn ApcParser::put(Self, String) -> Unit
+pub fn ApcParser::register_handler(Self, Int, ApcHandler) -> Disposable
+pub fn ApcParser::reset(Self) -> Unit
+pub fn ApcParser::set_handler_fallback(Self, (Int, String, String?) -> Unit) -> Unit
+pub fn ApcParser::start(Self, Int) -> Unit
+
+pub(all) enum DcsFallbackPayload {
+  DcsParams(Params)
+  DcsData(String)
+  DcsSuccess(Bool)
+}
+
+type DcsHandler
+pub fn DcsHandler::from_callbacks((Params) -> Unit, (String) -> Unit, (Bool) -> Bool) -> Self
+pub fn DcsHandler::new((String, Params) -> Bool) -> Self
+
+type DcsParser
+pub fn DcsParser::clear_handler(Self, Int) -> Unit
+pub fn DcsParser::dispose(Self) -> Unit
+pub fn DcsParser::hook(Self, Int, Params) -> Unit
+pub fn DcsParser::new() -> Self
+pub fn DcsParser::put(Self, String) -> Unit
+pub fn DcsParser::register_handler(Self, Int, DcsHandler) -> Disposable
+pub fn DcsParser::reset(Self) -> Unit
+pub fn DcsParser::set_handler_fallback(Self, (Int, String, DcsFallbackPayload) -> Unit) -> Unit
+pub fn DcsParser::unhook(Self, Bool) -> Unit
+
+type Disposable
+pub fn Disposable::dispose(Self) -> Unit
+
+type EscapeSequenceParser
+pub fn EscapeSequenceParser::apc_parser(Self) -> ApcParser
+pub fn EscapeSequenceParser::clear_apc_handler(Self, FunctionIdentifier) -> Unit
+pub fn EscapeSequenceParser::clear_csi_handler(Self, FunctionIdentifier) -> Unit
+pub fn EscapeSequenceParser::clear_dcs_handler(Self, FunctionIdentifier) -> Unit
+pub fn EscapeSequenceParser::clear_esc_handler(Self, FunctionIdentifier) -> Unit
+pub fn EscapeSequenceParser::clear_execute_handler(Self, String) -> Unit
+pub fn EscapeSequenceParser::clear_osc_handler(Self, Int) -> Unit
+pub fn EscapeSequenceParser::clear_print_handler(Self) -> Unit
+pub fn EscapeSequenceParser::collect(Self) -> Int
+pub fn EscapeSequenceParser::collect_string(Self) -> String
+pub fn EscapeSequenceParser::current_state(Self) -> Int
+pub fn EscapeSequenceParser::dcs_parser(Self) -> DcsParser
+pub fn EscapeSequenceParser::ident_to_string(Self, Int) -> String
+pub fn EscapeSequenceParser::identifier(Self, FunctionIdentifier, final_start? : Int, final_end? : Int) -> Int
+pub fn EscapeSequenceParser::initial_state(Self) -> Int
+pub fn EscapeSequenceParser::new(transitions? : TransitionTable) -> Self
+pub fn EscapeSequenceParser::osc_parser(Self) -> OscParser
+pub fn EscapeSequenceParser::params(Self) -> Params
+pub fn EscapeSequenceParser::parse(Self, String) -> Unit
+pub fn EscapeSequenceParser::preceding_join_state(Self) -> Int
+pub fn EscapeSequenceParser::register_apc_handler(Self, FunctionIdentifier, ApcHandler) -> Disposable
+pub fn EscapeSequenceParser::register_csi_handler(Self, FunctionIdentifier, (Params) -> Bool) -> Disposable
+pub fn EscapeSequenceParser::register_dcs_handler(Self, FunctionIdentifier, DcsHandler) -> Disposable
+pub fn EscapeSequenceParser::register_esc_handler(Self, FunctionIdentifier, () -> Bool) -> Disposable
+pub fn EscapeSequenceParser::register_osc_handler(Self, Int, OscHandler) -> Disposable
+pub fn EscapeSequenceParser::reset(Self) -> Unit
+pub fn EscapeSequenceParser::set_apc_handler_fallback(Self, (Int, String, String?) -> Unit) -> Unit
+pub fn EscapeSequenceParser::set_csi_handler_fallback(Self, (Int, Params) -> Unit) -> Unit
+pub fn EscapeSequenceParser::set_current_state(Self, Int) -> Unit
+pub fn EscapeSequenceParser::set_dcs_handler_fallback(Self, (Int, String, DcsFallbackPayload) -> Unit) -> Unit
+pub fn EscapeSequenceParser::set_esc_handler_fallback(Self, (Int) -> Unit) -> Unit
+pub fn EscapeSequenceParser::set_execute_handler(Self, String, (Int) -> Bool) -> Unit
+pub fn EscapeSequenceParser::set_execute_handler_fallback(Self, (Int) -> Unit) -> Unit
+pub fn EscapeSequenceParser::set_osc_handler_fallback(Self, (Int, String, String?) -> Unit) -> Unit
+pub fn EscapeSequenceParser::set_print_handler(Self, (String) -> Unit) -> Unit
+pub fn EscapeSequenceParser::transition_table(Self) -> TransitionTable
+
+pub(all) struct FunctionIdentifier {
+  prefix : String?
+  intermediates : String?
+  final_byte : String
+}
+
+type OscHandler
+pub fn OscHandler::from_callbacks(() -> Unit, (String) -> Unit, (Bool) -> Bool) -> Self
+pub fn OscHandler::new((String) -> Bool) -> Self
+
+type OscParser
+pub fn OscParser::clear_handler(Self, Int) -> Unit
+pub fn OscParser::dispose(Self) -> Unit
+pub fn OscParser::end(Self, Bool) -> Unit
+pub fn OscParser::new() -> Self
+pub fn OscParser::put(Self, String) -> Unit
+pub fn OscParser::register_handler(Self, Int, OscHandler) -> Disposable
+pub fn OscParser::reset(Self) -> Unit
+pub fn OscParser::set_handler_fallback(Self, (Int, String, String?) -> Unit) -> Unit
+pub fn OscParser::start(Self) -> Unit
+
+pub(all) enum ParamEntry {
+  Param(Int)
+  SubParams(Array[Int])
+} derive(Eq, @debug.Debug)
+
+type Params
+pub fn Params::add_digit(Self, Int) -> Unit
+pub fn Params::add_param(Self, Int) -> Unit
+pub fn Params::add_sub_param(Self, Int) -> Unit
+pub fn Params::clone(Self) -> Self
+pub fn Params::from_array(Array[ParamEntry]) -> Self
+pub fn Params::get_sub_params(Self, Int) -> Array[Int]?
+pub fn Params::get_sub_params_all(Self) -> Map[Int, Array[Int]]
+pub fn Params::has_sub_params(Self, Int) -> Bool
+pub fn Params::length(Self) -> Int
+pub fn Params::max_length(Self) -> Int
+pub fn Params::max_subparams_length(Self) -> Int
+pub fn Params::new(max_length? : Int, max_subparams_length? : Int) -> Self
+pub fn Params::param_at(Self, Int) -> Int
+pub fn Params::params_slice(Self) -> Array[Int]
+pub fn Params::parse_zdm(Self, Array[String]) -> Unit
+pub fn Params::reset(Self) -> Unit
+pub fn Params::reset_zdm(Self) -> Unit
+pub fn Params::sub_params_length(Self) -> Int
+pub fn Params::to_array(Self) -> Array[ParamEntry]
+
+type TransitionTable
+pub fn TransitionTable::add(Self, Int, Int, Int, Int) -> Unit
+pub fn TransitionTable::add_many(Self, Array[Int], Int, Int, Int) -> Unit
+pub fn TransitionTable::add_range(Self, Int, Int, Int, Int, Int) -> Unit
+pub fn TransitionTable::length(Self) -> Int
+pub fn TransitionTable::new(Int) -> Self
+pub fn TransitionTable::set_default(Self, Int, Int) -> Unit
+pub fn TransitionTable::transition(Self, Int, Int) -> Int
+
+// Type aliases
+
+// Traits
