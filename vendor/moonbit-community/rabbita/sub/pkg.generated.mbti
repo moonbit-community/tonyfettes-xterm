@@ -1,0 +1,59 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/rabbita/sub"
+
+import {
+  "moonbit-community/rabbita/cmd",
+  "moonbit-community/rabbita/common",
+  "moonbit-community/rabbita/url",
+}
+
+// Values
+pub fn batch(Array[Sub]) -> Sub
+
+pub fn custom_sub(String, Scope, Error, SubLoader) -> Sub
+
+pub fn every(Int, @cmd.Cmd) -> Sub
+
+pub let none : Sub
+
+pub fn on_animation_frame(@cmd.Dispatch[Double]) -> Sub
+
+pub fn on_key_down(@cmd.Dispatch[@common.Keyboard]) -> Sub
+
+pub fn on_key_up(@cmd.Dispatch[@common.Keyboard]) -> Sub
+
+pub fn on_mouse_move(@cmd.Dispatch[@common.Mouse]) -> Sub
+
+pub fn on_resize(@cmd.Dispatch[@common.Viewport]) -> Sub
+
+pub fn on_scroll(@cmd.Dispatch[@common.Scroll]) -> Sub
+
+pub fn on_url_changed(@cmd.Dispatch[@url.Url]) -> Sub
+
+pub fn on_url_request(@cmd.Dispatch[@url.UrlRequest]) -> Sub
+
+pub fn on_visibility_change(@cmd.Dispatch[Bool]) -> Sub
+
+// Errors
+
+// Types and methods
+pub(all) struct RunningSub {
+  unload : (&@cmd.Scheduler) -> Unit
+  update_tagger : (Error) -> Unit
+}
+
+pub(all) enum Scope {
+  Local
+  Global
+}
+
+type Sub
+
+pub(all) struct SubLoader((Error, &@cmd.Scheduler) -> RunningSub?)
+#deprecated
+pub fn SubLoader::inner(Self) -> (Error, &@cmd.Scheduler) -> RunningSub?
+
+// Type aliases
+
+// Traits
+

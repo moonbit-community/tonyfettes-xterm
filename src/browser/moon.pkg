@@ -1,4 +1,6 @@
 import {
+  "feihaoxiang/xterm/src/common" @common,
+  "feihaoxiang/xterm/src/common/buffer" @buffer,
   "feihaoxiang/xterm/src/headless" @headless,
   "moonbit-community/rabbita" @rabbita,
   "moonbit-community/rabbita/dom" @dom,

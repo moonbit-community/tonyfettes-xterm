@@ -1,0 +1,47 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/rabbita/http"
+
+import {
+  "moonbit-community/rabbita/cmd",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn delete(String) -> Request
+
+pub fn get(String) -> Request
+
+pub fn patch(String) -> RequestWithBody
+
+pub fn post(String) -> RequestWithBody
+
+pub fn put(String) -> RequestWithBody
+
+// Errors
+pub(all) suberror RequestError {
+  RequestError(String)
+}
+
+// Types and methods
+pub(all) enum Body {
+  Json(Json)
+  Text(String)
+  Empty
+}
+
+type Request
+pub fn Request::expect_empty(Self, @cmd.Dispatch[Error?]) -> @cmd.Cmd
+pub fn[T : @json.FromJson] Request::expect_json(Self, @cmd.Dispatch[Result[T, Error]]) -> @cmd.Cmd
+pub fn Request::expect_text(Self, @cmd.Dispatch[Result[String, Error]]) -> @cmd.Cmd
+
+type RequestWithBody
+pub fn RequestWithBody::expect_empty(Self, @cmd.Dispatch[Error?]) -> @cmd.Cmd
+pub fn[T : @json.FromJson] RequestWithBody::expect_json(Self, @cmd.Dispatch[Result[T, Error]]) -> @cmd.Cmd
+pub fn RequestWithBody::expect_text(Self, @cmd.Dispatch[Result[String, Error]]) -> @cmd.Cmd
+pub fn[T : ToJson] RequestWithBody::with_json(Self, T) -> Request
+pub fn RequestWithBody::with_text(Self, String) -> Request
+
+// Type aliases
+
+// Traits
+

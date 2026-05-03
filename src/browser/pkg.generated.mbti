@@ -2,6 +2,7 @@
 package "feihaoxiang/xterm/src/browser"
 
 import {
+  "feihaoxiang/xterm/src/common",
   "feihaoxiang/xterm/src/headless",
   "moonbit-community/rabbita/dom",
   "moonbitlang/core/debug",
@@ -18,8 +19,20 @@ pub(all) struct RenderCell {
   width : Int
   fg : Int
   bg : Int
+  fg_css : String?
+  bg_css : String?
+  bold : Bool
+  dim : Bool
+  italic : Bool
+  underline : Bool
+  blink : Bool
+  invisible : Bool
+  inverse : Bool
   is_cursor : Bool
 } derive(Eq, @debug.Debug)
+pub fn RenderCell::class_name(Self) -> String
+pub fn RenderCell::style_declarations(Self) -> Array[String]
+pub fn RenderCell::text(Self) -> String
 
 pub(all) struct RenderModel {
   cols : Int
@@ -51,8 +64,12 @@ pub fn Terminal::dispose(Self) -> Unit
 pub fn Terminal::element(Self) -> @dom.Element?
 pub fn Terminal::element_id(Self) -> String?
 pub fn Terminal::focus(Self) -> Unit
+pub fn Terminal::input(Self, String, was_user_input? : Bool) -> Unit
+pub fn Terminal::input_element(Self) -> @dom.Element?
+pub fn Terminal::input_element_id(Self) -> String?
 pub fn Terminal::is_open(Self) -> Bool
 pub fn Terminal::new(options? : @headless.TerminalOptions) -> Self
+pub fn Terminal::on_data(Self, (String) -> Unit) -> @common.Disposable
 pub fn Terminal::open(Self, String) -> Unit
 pub fn Terminal::refresh(Self) -> Unit
 pub fn Terminal::reset(Self) -> Unit

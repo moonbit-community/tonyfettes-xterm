@@ -50,8 +50,34 @@ async function launchChromium() {
 const browser = await launchChromium();
 
 const page = await browser.newPage({ viewport: { width: 900, height: 520 } });
+const pageErrors = [];
+page.on('pageerror', error => {
+  pageErrors.push(error.stack ?? error.message);
+});
 await page.goto(url);
 await page.waitForSelector('[data-testid="terminal-screen"]');
+await page.locator('[data-testid="terminal-screen"]').click();
+await page.keyboard.type('hello');
+await page.keyboard.press('Enter');
+await page.evaluate(() => {
+  const input = document.querySelector('[data-testid="terminal-input"]');
+  input.value = 'paste-ok';
+  input.dispatchEvent(new InputEvent('input', { data: 'paste-ok', inputType: 'insertText', bubbles: true }));
+  const clipboard = new DataTransfer();
+  clipboard.setData('text/plain', 'clip-ok');
+  const event = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
+  Object.defineProperty(event, 'clipboardData', { value: clipboard });
+  input.dispatchEvent(event);
+});
+try {
+  await page.waitForFunction(() => {
+    const text = document.querySelector('[data-testid="terminal-screen"]')?.innerText ?? '';
+    return text.includes('hello') && text.includes('paste-ok') && text.includes('clip-ok');
+  });
+} catch (error) {
+  const text = await page.evaluate(() => document.querySelector('[data-testid="terminal-screen"]')?.innerText ?? '');
+  throw new Error(`terminal input did not settle: ${JSON.stringify({ text, pageErrors })}`, { cause: error });
+}
 const result = await page.evaluate(() => {
   const screen = document.querySelector('[data-testid="terminal-screen"]');
   const rows = [...document.querySelectorAll('.mb-xterm-row')];
@@ -64,14 +90,23 @@ const result = await page.evaluate(() => {
 });
 await browser.close();
 
-if (!result.text.includes('MoonBit xterm browser POC')) {
+if (!result.text.includes('MoonBit xterm browser integration')) {
   throw new Error(`terminal text was not rendered: ${JSON.stringify(result)}`);
 }
 if (!result.text.includes('Rabbita DOM renderer')) {
   throw new Error(`renderer line was not rendered: ${JSON.stringify(result)}`);
 }
-if (result.rowCount !== 8) {
-  throw new Error(`expected 8 terminal rows, saw ${result.rowCount}`);
+if (!result.text.includes('hello')) {
+  throw new Error(`keyboard input was not rendered: ${JSON.stringify(result)}`);
+}
+if (!result.text.includes('paste-ok')) {
+  throw new Error(`input event text was not rendered: ${JSON.stringify(result)}`);
+}
+if (!result.text.includes('clip-ok')) {
+  throw new Error(`clipboard paste text was not rendered: ${JSON.stringify(result)}`);
+}
+if (result.rowCount !== 14) {
+  throw new Error(`expected 14 terminal rows, saw ${result.rowCount}`);
 }
 if (result.cursorCount !== 1) {
   throw new Error(`expected one cursor cell, saw ${result.cursorCount}`);
