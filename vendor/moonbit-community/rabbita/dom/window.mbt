@@ -104,6 +104,20 @@ pub extern "js" fn Window::set_interval(
 pub extern "js" fn Window::clear_interval(self : Self, interval_id : Int) = "(self,id) => self.clearInterval(id)"
 
 ///|
+/// https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout
+#cfg(target="js")
+pub extern "js" fn Window::set_timeout(
+  self : Self,
+  f : () -> Unit,
+  ms : Int,
+) -> Int = "(self,f,ms) => self.setTimeout(f, ms)"
+
+///|
+/// https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout
+#cfg(target="js")
+pub extern "js" fn Window::clear_timeout(self : Self, timeout_id : Int) = "(self,id) => self.clearTimeout(id)"
+
+///|
 /// https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
 #cfg(target="js")
 pub extern "js" fn Window::request_animation_frame(

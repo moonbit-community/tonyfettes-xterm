@@ -1,5 +1,8 @@
 import {
   "feihaoxiang/xterm/src/browser" @xterm_browser,
+  "moonbit-community/rabbita/dom" @dom,
+  "moonbitlang/core/json",
+  "moonbitlang/core/string",
 }
 
 supported_targets = "js"
