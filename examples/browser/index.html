@@ -39,8 +39,9 @@
       }
 
       .mb-xterm {
+        position: relative;
         padding: 18px;
-        min-height: 13rem;
+        min-height: 22rem;
         outline: none;
         color: #e5e1d8;
         background: #0f1115;
@@ -48,6 +49,8 @@
           "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
         font-size: 14px;
         line-height: 1.45;
+        cursor: text;
+        user-select: text;
       }
 
       .mb-xterm-focused {
@@ -82,12 +85,33 @@
         color: #0f1115;
         background: #e5e1d8;
       }
+
+      .mb-xterm-input {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 1px;
+        height: 1px;
+        border: 0;
+        padding: 0;
+        opacity: 0;
+        resize: none;
+        outline: none;
+        background: transparent;
+        color: transparent;
+      }
+
+      @keyframes mb-xterm-blink {
+        50% {
+          opacity: 0;
+        }
+      }
     </style>
   </head>
   <body>
     <main>
       <div id="terminal" class="terminal-frame"></div>
     </main>
-    <script type="module" src="../../_build/js/debug/build/examples/browser/browser.js"></script>
+    <script type="module" src="../../_build/js/debug/build/examples/browser/browser.js?v=95b3e1f"></script>
   </body>
 </html>
