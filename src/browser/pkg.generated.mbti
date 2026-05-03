@@ -1,0 +1,77 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "feihaoxiang/xterm/src/browser"
+
+import {
+  "feihaoxiang/xterm/src/headless",
+  "moonbit-community/rabbita/dom",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct RenderCell {
+  x : Int
+  chars : String
+  width : Int
+  fg : Int
+  bg : Int
+  is_cursor : Bool
+} derive(Eq, @debug.Debug)
+
+pub(all) struct RenderModel {
+  cols : Int
+  rows : Int
+  cursor_x : Int
+  cursor_y : Int
+  viewport_y : Int
+  base_y : Int
+  focused : Bool
+  rows_data : Array[RenderRow]
+} derive(Eq, @debug.Debug)
+pub fn RenderModel::from_terminal(@headless.Terminal, focused? : Bool) -> Self
+pub fn RenderModel::line_texts(Self) -> Array[String]
+
+pub(all) struct RenderRow {
+  y : Int
+  buffer_index : Int
+  text : String
+  is_wrapped : Bool
+  dirty : Bool
+  cells : Array[RenderCell]
+} derive(Eq, @debug.Debug)
+
+type Terminal
+pub fn Terminal::blur(Self) -> Unit
+pub fn Terminal::clear(Self) -> Unit
+pub fn Terminal::cols(Self) -> Int
+pub fn Terminal::dispose(Self) -> Unit
+pub fn Terminal::element(Self) -> @dom.Element?
+pub fn Terminal::element_id(Self) -> String?
+pub fn Terminal::focus(Self) -> Unit
+pub fn Terminal::is_open(Self) -> Bool
+pub fn Terminal::new(options? : @headless.TerminalOptions) -> Self
+pub fn Terminal::open(Self, String) -> Unit
+pub fn Terminal::refresh(Self) -> Unit
+pub fn Terminal::reset(Self) -> Unit
+pub fn Terminal::resize(Self, Int, Int) -> Unit
+pub fn Terminal::rows(Self) -> Int
+pub fn Terminal::screen_element(Self) -> @dom.Element?
+pub fn Terminal::screen_element_id(Self) -> String?
+pub fn Terminal::scroll_lines(Self, Int) -> Unit
+pub fn Terminal::scroll_pages(Self, Int) -> Unit
+pub fn Terminal::scroll_to_bottom(Self) -> Unit
+pub fn Terminal::scroll_to_line(Self, Int) -> Unit
+pub fn Terminal::scroll_to_top(Self) -> Unit
+pub fn Terminal::snapshot(Self) -> RenderModel
+pub fn Terminal::write(Self, String, callback? : () -> Unit) -> Unit
+pub fn Terminal::write_bytes(Self, Bytes, callback? : () -> Unit) -> Unit raise
+pub fn Terminal::writeln(Self, String, callback? : () -> Unit) -> Unit
+pub fn Terminal::writeln_bytes(Self, Bytes, callback? : () -> Unit) -> Unit raise
+
+// Type aliases
+pub using @headless {type TerminalOptions}
+
+// Traits

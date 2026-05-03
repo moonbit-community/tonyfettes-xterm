@@ -1,0 +1,9 @@
+import {
+  "feihaoxiang/xterm/src/browser" @xterm_browser,
+}
+
+supported_targets = "js"
+
+options(
+  "is-main": true,
+)

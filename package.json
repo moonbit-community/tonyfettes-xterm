@@ -2,6 +2,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "browser:build": "moon build examples/browser --target js",
+    "browser:check": "moon check --target js && npm run browser:build",
+    "browser:serve": "node tools/browser/serve.mjs",
+    "browser:smoke": "node tools/browser/smoke.mjs",
+    "browser:test": "npm run browser:build && npm run browser:smoke",
     "harness:check": "node --check tools/harness/run.mjs && node --check tools/harness/reference-xterm.mjs && node --check tools/harness/moonbit-terminal.mjs && node --check tools/harness/prepare-reference.mjs",
     "harness:list": "node tools/harness/run.mjs --list",
     "harness:moonbit": "node tools/harness/run.mjs --implementation-only",

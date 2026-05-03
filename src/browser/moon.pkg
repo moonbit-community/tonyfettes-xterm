@@ -1,0 +1,8 @@
+import {
+  "feihaoxiang/xterm/src/headless" @headless,
+  "moonbit-community/rabbita" @rabbita,
+  "moonbit-community/rabbita/dom" @dom,
+  "moonbit-community/rabbita/html" @html,
+}
+
+supported_targets = "js"

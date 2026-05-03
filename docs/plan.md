@@ -12,19 +12,19 @@ Initial scope:
 - Headless terminal core.
 - Unit tests and coverage workflow.
 - Parser, buffer, input handler, and headless public API.
+- Browser DOM integration is planned after the headless API and compatibility
+  harness, starting with a render-only Rabbita proof of concept.
 
 Non-goals for now:
 
 - Compatibility harness as an active gate before the headless core has real
   state.
-- Browser DOM integration.
-- Renderer implementations.
-- Clipboard, keyboard, mouse, selection, IME, and accessibility.
+- Browser input in the first DOM proof of concept.
 - WebGL, image, and ligature addons.
 - Automatic dependency installation or building inside `reference/xterm.js`.
 
-Later browser work should evaluate `moonbit-community/rabbita` for DOM
-integration.
+Browser work should evaluate `moonbit-community/rabbita` as the DOM integration
+layer while keeping the terminal core headless-first.
 
 ## Quality Gates
 
@@ -43,6 +43,10 @@ integration.
 - Deferred harness tasks require:
   - `npm run harness:check`
   - `npm run harness:list`
+- Browser DOM tasks require:
+  - `moon check --target js`
+  - `moon build --target js`
+  - a browser smoke command once the example runner exists
 - Review generated `.mbti` changes whenever `moon info` changes public API
   surface.
 - The harness must not install dependencies, build the xterm.js submodule, or
@@ -272,17 +276,173 @@ Phase 7 notes:
   keyboard protocol, and DECRQSS remain later core/input compatibility work
   before they can become passing harness cases.
 
-### Later Browser Work
+### Phase 8: Browser DOM Shell
 
+Gate: after Phase 7
+Status: done
+
+Reference files:
+
+- `reference/xterm.js/src/browser/public/Terminal.ts`
+- `reference/xterm.js/src/browser/CoreBrowserTerminal.ts`
+- `reference/xterm.js/src/browser/Types.ts`
+- `reference/xterm.js/src/browser/renderer/dom/DomRenderer.ts`
+- `reference/xterm.js/src/browser/renderer/dom/DomRendererRowFactory.ts`
+- `reference/xterm.js/src/browser/services/RenderService.ts`
+- `reference/xterm.js/src/browser/Viewport.ts`
+
+Phase 8 invariants:
+
+- The first browser package imports the public `src/headless` API, not terminal
+  internals.
+- Rabbita is the initial app and DOM layer for mounting, lifecycle, and row
+  rendering.
+- Missing low-level DOM APIs should be isolated behind a small browser package
+  boundary rather than leaking into common/headless packages.
+- Input is planned but not implemented in this phase. The first DOM proof of
+  concept must not fake keyboard, paste, or mouse behavior.
+
+| ID | status | target | depends on | acceptance | validation | commit scope |
+|---|---|---|---|---|---|---|
+| P8.1 | done | Rabbita dependency and JS target package | Phase 7 | `src/browser` package can type-check for the JS backend and depends on Rabbita without affecting native/headless packages | `moon check --target js`; `moon build --target js` | `feat(browser)` |
+| P8.2 | done | browser terminal facade | P8.1 | browser-facing terminal construction, `open`, `dispose`, `element`, `screenElement`, `rows`, `cols`, `write`, `writeln`, `resize`, `refresh`, and scroll methods delegate to the headless terminal plus renderer state | `moon check --target js`; `moon test`; `moon coverage analyze -- -f summary` | `feat(browser)` |
+| P8.3 | done | render model | P8.2 | headless buffer rows are converted into stable viewport row data with text, width, attrs, cursor state, and dirty-row metadata, independent of DOM | `moon check`; `moon test`; coverage summary | `feat(browser)` |
+| P8.4 | done | Rabbita DOM renderer MVP | P8.3 | a mounted terminal renders rows, cursor, focus class, basic theme CSS, and resize dimensions in the browser; rendering is output-only | `moon check --target js`; `moon build --target js`; browser smoke command | `feat(browser)` |
+| P8.5 | done | browser example and smoke runner | P8.4 | an example page mounts the terminal, writes deterministic fixture text, and verifies non-empty DOM output in a browser smoke test | browser smoke command; doc review | `test(browser)` |
+
+Phase 8 notes:
+
+- The first milestone is intentionally render-only: no textarea, no keyboard
+  translation, no paste, no mouse reporting, no selection.
+- `src/browser` now exposes an opaque browser `Terminal`, a viewport render
+  model, and a Rabbita view that renders fixed-width DOM rows from the public
+  headless buffer API.
+- `examples/browser` mounts deterministic fixture content and `tools/browser`
+  provides build/smoke/serve workflow scripts. The smoke runner uses a file URL
+  and a system-browser fallback so it does not require installing Playwright
+  browsers into this repository.
+- If Rabbita row diffing is too expensive for terminal redraws, keep Rabbita as
+  the shell and introduce a narrow imperative row renderer behind the same
+  browser package boundary.
+
+### Phase 9: Renderer And Viewport Parity
+
+Gate: after Phase 8
+Status: todo
+
+Reference files:
+
+- `reference/xterm.js/src/browser/renderer/dom/DomRenderer.ts`
+- `reference/xterm.js/src/browser/renderer/dom/DomRendererRowFactory.ts`
+- `reference/xterm.js/src/browser/renderer/shared/RendererUtils.ts`
+- `reference/xterm.js/src/browser/renderer/shared/SelectionRenderModel.ts`
+- `reference/xterm.js/src/browser/renderer/shared/TextBlinkStateManager.ts`
+- `reference/xterm.js/src/browser/services/CharSizeService.ts`
+- `reference/xterm.js/src/browser/services/ThemeService.ts`
+- `reference/xterm.js/src/browser/services/RenderService.ts`
+- `reference/xterm.js/src/browser/Viewport.ts`
+
+| ID | status | target | depends on | acceptance | validation | commit scope |
+|---|---|---|---|---|---|---|
+| P9.1 | todo | character measurement and dimensions | Phase 8 | CSS/device cell dimensions, DPR handling, line height, letter spacing, and resize events are modeled for DOM rendering | `moon check --target js`; browser smoke command | `feat(browser)` |
+| P9.2 | todo | render scheduler | P9.1 | dirty rows are coalesced through an animation-frame refresh path, with full refresh and synchronous refresh paths represented | `moon check --target js`; browser smoke command | `feat(browser)` |
+| P9.3 | todo | DOM row styling | P9.2 | SGR attrs, ANSI colors, default colors, inverse, bold, italic, underline, blink, dim, invisible, and cursor styles are rendered from buffer attrs | `moon check`; `moon test`; browser smoke command | `feat(browser)` |
+| P9.4 | todo | wide and combined text rendering | P9.3 | wide chars, combining text, wrapped lines, zero-width cells, and row truncation match the headless buffer model | `moon check`; `moon test`; browser smoke command | `feat(browser)` |
+| P9.5 | todo | viewport and scrollback DOM integration | P9.4 | DOM scroll position maps to buffer viewport, scrollback height is synced, alt-buffer scrolling is isolated, and scroll events refresh rendered rows | `moon check --target js`; browser smoke command | `feat(browser)` |
+| P9.6 | todo | browser render compatibility cases | P9.5 | deterministic render cases compare DOM text/classes against expected snapshots and selected xterm.js browser reference behavior | browser smoke command; `npm run harness:test` if shared fixtures are reused | `test(browser)` |
+
+### Phase 10: Browser Public API Parity
+
+Gate: after Phase 8, can overlap with Phase 9 when APIs are independent
+Status: todo
+
+Reference files:
+
+- `reference/xterm.js/src/browser/public/Terminal.ts`
+- `reference/xterm.js/src/common/public/BufferNamespaceApi.ts`
+- `reference/xterm.js/src/common/public/ParserApi.ts`
+- `reference/xterm.js/src/common/public/UnicodeApi.ts`
+- `reference/xterm.js/src/common/public/AddonManager.ts`
+
+| ID | status | target | depends on | acceptance | validation | commit scope |
+|---|---|---|---|---|---|---|
+| P10.1 | todo | browser options surface | Phase 8 | browser options are split into constructor-only and mutable options, with DOM-relevant defaults documented and tested | `moon check`; `moon test`; coverage summary | `feat(browser)` |
+| P10.2 | todo | public events | P10.1 | browser terminal exposes headless events plus focus, blur, dimensions, render, key, selection, and accessibility events where implemented | `moon check`; `moon test`; coverage summary | `feat(browser)` |
+| P10.3 | todo | public methods | P10.2 | `open`, `focus`, `blur`, `write`, `writeln`, `input`, `paste`, `refresh`, `reset`, `resize`, and scroll methods have browser API tests for implemented behavior and explicit deferred behavior | `moon check`; `moon test`; browser smoke command | `feat(browser)` |
+| P10.4 | todo | buffer/parser/unicode/addon facade | P10.3 | browser API reuses headless buffer and parser facades, exposes unicode/addon surfaces when backed by implementation, and avoids leaking internal renderer types | `moon check`; `moon info`; `.mbti` review | `feat(browser)` |
+| P10.5 | todo | markers and decorations | P10.4 | markers and decorations have browser-visible state and render invalidation behavior matching the implemented buffer model | `moon check`; `moon test`; browser smoke command | `feat(browser)` |
+
+### Phase 11: Selection, Clipboard, Links, And Decorations
+
+Gate: after Phase 9 render model can map DOM coordinates to cells
+Status: todo
+
+Reference files:
+
+- `reference/xterm.js/src/browser/services/SelectionService.ts`
+- `reference/xterm.js/src/browser/selection/SelectionModel.ts`
+- `reference/xterm.js/src/browser/Clipboard.ts`
+- `reference/xterm.js/src/browser/Linkifier.ts`
+- `reference/xterm.js/src/browser/OscLinkProvider.ts`
+- `reference/xterm.js/src/browser/services/LinkProviderService.ts`
+- `reference/xterm.js/src/browser/decorations/BufferDecorationRenderer.ts`
+- `reference/xterm.js/src/browser/decorations/OverviewRulerRenderer.ts`
+
+| ID | status | target | depends on | acceptance | validation | commit scope |
+|---|---|---|---|---|---|---|
+| P11.1 | todo | selection model | Phase 9 | selection coordinates, reversed selections, select all, line selection, trim handling, and selection text extraction are covered by unit tests | `moon check`; `moon test`; coverage summary | `feat(selection)` |
+| P11.2 | todo | DOM selection interactions | P11.1 | mouse drag, double/triple click, column selection, autoscroll, and refresh invalidation update the selection render model | `moon check --target js`; browser smoke command | `feat(selection)` |
+| P11.3 | todo | clipboard integration | P11.2 | copy and paste browser events are wired behind DOM/clipboard boundaries, with bracketed paste deferred to input protocol handling | browser smoke command | `feat(browser)` |
+| P11.4 | todo | link provider and hover rendering | P11.2 | registered link providers can mark ranges, hover state updates row styles, and OSC links are represented when core support exists | `moon check`; `moon test`; browser smoke command | `feat(browser)` |
+| P11.5 | todo | decoration rendering | P11.4 | buffer decorations and overview ruler markers render from public decoration state and trigger minimal row refreshes | browser smoke command | `feat(browser)` |
+
+### Phase 12: Browser Input, IME, Keyboard, And Mouse
+
+Gate: after Phase 8 DOM shell; implementation deferred until render-only browser
+path is stable
 Status: deferred
 
-- Evaluate `moonbit-community/rabbita`.
-- DOM open, focus, and blur.
-- Textarea input.
-- Keyboard translation.
-- Paste handling.
-- Simple renderer.
-- Viewport scrolling.
+Reference files:
+
+- `reference/xterm.js/src/browser/services/KeyboardService.ts`
+- `reference/xterm.js/src/common/input/Keyboard.ts`
+- `reference/xterm.js/src/common/input/KittyKeyboard.ts`
+- `reference/xterm.js/src/common/input/Win32InputMode.ts`
+- `reference/xterm.js/src/browser/input/CompositionHelper.ts`
+- `reference/xterm.js/src/browser/input/Mouse.ts`
+- `reference/xterm.js/src/browser/services/MouseService.ts`
+- `reference/xterm.js/src/browser/services/MouseCoordsService.ts`
+- `reference/xterm.js/src/browser/Clipboard.ts`
+
+| ID | status | target | depends on | acceptance | validation | commit scope |
+|---|---|---|---|---|---|---|
+| P12.1 | deferred | hidden textarea and focus model | Phase 8 | textarea capture, focus/blur, cursor-relative textarea positioning, and disabled stdin behavior are represented | browser smoke command | `feat(input)` |
+| P12.2 | deferred | keyboard translation | P12.1 | normal keys, application cursor keys, application keypad, modifiers, platform differences, custom key handlers, and scroll-on-user-input behavior match planned browser API tests | `moon check`; `moon test`; browser smoke command | `feat(input)` |
+| P12.3 | deferred | advanced keyboard protocols | P12.2 | Kitty keyboard and Win32 input mode are ported after core protocol support exists | `moon check`; `moon test`; compatibility cases | `feat(input)` |
+| P12.4 | deferred | IME composition | P12.1 | composition start/update/end, dead keys, AltGraph, emoji input, and screen-reader mode interactions are tested in browser integration tests | browser smoke command | `feat(input)` |
+| P12.5 | deferred | paste and bracketed paste | P12.1 | paste events feed the core input path, bracketed paste mode wraps input, and user input events preserve expected `onData` behavior | `moon check`; `moon test`; browser smoke command | `feat(input)` |
+| P12.6 | deferred | mouse protocols | P12.1, P9.5 | coordinate mapping, wheel handling, focus reporting, X10, VT200, drag, any-event, SGR, and custom wheel handlers are planned against xterm.js behavior | `moon check`; `moon test`; browser smoke command | `feat(input)` |
+
+### Phase 13: Accessibility And Browser Polish
+
+Gate: after Phase 10 public API and Phase 12 input foundations
+Status: deferred
+
+Reference files:
+
+- `reference/xterm.js/src/browser/AccessibilityManager.ts`
+- `reference/xterm.js/src/browser/LocalizableStrings.ts`
+- `reference/xterm.js/src/browser/services/CoreBrowserService.ts`
+- `reference/xterm.js/src/browser/services/ThemeService.ts`
+- `reference/xterm.js/src/browser/ColorContrastCache.ts`
+- `reference/xterm.js/src/browser/scrollable/*`
+
+| ID | status | target | depends on | acceptance | validation | commit scope |
+|---|---|---|---|---|---|---|
+| P13.1 | deferred | accessibility manager | Phase 12 | screen-reader mode exposes ARIA labels, a11y char/tab updates, and non-visual textarea behavior compatible with browser tests | browser smoke command | `feat(a11y)` |
+| P13.2 | deferred | theme and contrast polish | Phase 9 | theme changes, color contrast cache, cursor contrast, transparency, and high-contrast behavior are modeled where supported | `moon check`; `moon test`; browser smoke command | `feat(browser)` |
+| P13.3 | deferred | window and DPR lifecycle | P9.1 | DPR changes, owner document changes, visibility pause/resume, and dispose cleanup are covered by browser integration tests | browser smoke command | `feat(browser)` |
+| P13.4 | deferred | scrollable polish | P9.5 | scrollbar options, touch scroll, smooth scroll, and platform-specific scroll behavior are implemented behind the browser package boundary | browser smoke command | `feat(browser)` |
 
 ### Later Addons
 
