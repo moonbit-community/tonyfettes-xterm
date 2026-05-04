@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MoonBit xterm browser POC</title>
+    <title>MoonBit xterm asciinema replay</title>
     <style>
       :root {
         color-scheme: dark;
@@ -29,7 +29,27 @@
       }
 
       main {
-        width: min(760px, calc(100vw - 32px));
+        width: min(980px, calc(100vw - 32px));
+      }
+
+      .player-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 650;
+      }
+
+      .player-meta {
+        margin-top: 4px;
+        color: #9ba6b2;
+        font-size: 13px;
       }
 
       .terminal-frame {
@@ -38,10 +58,44 @@
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.34);
       }
 
+      .terminal-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 14px;
+        border-bottom: 1px solid #303741;
+        color: #9ba6b2;
+        font-size: 12px;
+      }
+
+      .traffic {
+        display: flex;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .dot-red {
+        background: #ff6b6b;
+      }
+
+      .dot-yellow {
+        background: #ffd166;
+      }
+
+      .dot-green {
+        background: #65d46e;
+      }
+
       .mb-xterm {
         position: relative;
         padding: 18px;
-        min-height: 22rem;
+        min-height: 31rem;
         outline: none;
         color: #e5e1d8;
         background: #0f1115;
@@ -106,12 +160,85 @@
           opacity: 0;
         }
       }
+
+      .player-controls {
+        display: grid;
+        grid-template-columns: auto auto auto 1fr auto auto;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .player-button {
+        height: 34px;
+        border: 1px solid #46505b;
+        padding: 0 14px;
+        background: #20262d;
+        color: #eef4f8;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .player-button:hover {
+        background: #2a313a;
+      }
+
+      .player-button.primary {
+        border-color: #42b883;
+        background: #1d3b32;
+      }
+
+      .timecode,
+      .status {
+        color: #aeb8c2;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .progress-track {
+        height: 8px;
+        border: 1px solid #3f4650;
+        background: #11161c;
+      }
+
+      .progress-fill {
+        width: var(--progress, 0%);
+        height: 100%;
+        background: #42b883;
+      }
     </style>
   </head>
   <body>
     <main>
-      <div id="terminal" class="terminal-frame"></div>
+      <div class="player-head">
+        <div>
+          <h1 id="player-title">asciicast replay</h1>
+          <div id="player-meta" class="player-meta">asciicast</div>
+        </div>
+        <div id="player-status" class="status">loading</div>
+      </div>
+      <div class="terminal-frame">
+        <div class="terminal-toolbar">
+          <div class="traffic" aria-hidden="true">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <span>moonbit-xterm.cast</span>
+        </div>
+        <div id="terminal"></div>
+      </div>
+      <div class="player-controls">
+        <button id="player-toggle" class="player-button primary">Play</button>
+        <button id="player-restart" class="player-button">Restart</button>
+        <button id="player-speed" class="player-button">1x</button>
+        <div class="progress-track" aria-hidden="true">
+          <div id="player-progress" class="progress-fill"></div>
+        </div>
+        <span id="player-time" class="timecode">0.0s / 0.0s</span>
+      </div>
     </main>
-    <script type="module" src="./_build/js/debug/build/examples/browser/browser.js?v=95b3e1f"></script>
+    <script type="module" src="./_build/js/debug/build/feihaoxiang/xterm/examples/browser/browser.js?v=93b7126"></script>
   </body>
 </html>
