@@ -1,10 +1,10 @@
 import {
-  "feihaoxiang/xterm/src/common" @common,
-  "feihaoxiang/xterm/src/common/buffer" @buffer,
-  "feihaoxiang/xterm/src/common/parser" @parser,
+  "feihaoxiang/xterm/src/common",
+  "feihaoxiang/xterm/src/common/buffer",
+  "feihaoxiang/xterm/src/common/parser",
   "feihaoxiang/xterm/src/terminal" @core,
 }
 
 import {
-  "moonbitlang/core/encoding/utf8" @utf8,
+  "moonbitlang/core/encoding/utf8",
 } for "test"

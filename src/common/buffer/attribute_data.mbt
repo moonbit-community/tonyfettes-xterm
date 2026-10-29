@@ -11,9 +11,9 @@ pub(all) enum UnderlineStyle {
 ///|
 struct ExtendedAttrs {
   mut underline_style : UnderlineStyle
-  mut underline_color : Int
-  mut underline_variant_offset : Int
-  mut url_id : Int
+  mut underline_color : Int32
+  mut underline_variant_offset : Int32
+  mut url_id : Int32
 }
 
 ///|
@@ -54,38 +54,38 @@ pub fn ExtendedAttrs::set_underline_style(
 }
 
 ///|
-pub fn ExtendedAttrs::underline_color(self : ExtendedAttrs) -> Int {
+pub fn ExtendedAttrs::underline_color(self : ExtendedAttrs) -> Int32 {
   self.underline_color
 }
 
 ///|
 pub fn ExtendedAttrs::set_underline_color(
   self : ExtendedAttrs,
-  value : Int,
+  value : Int32,
 ) -> Unit {
   self.underline_color = value & (CmMask | RgbMask)
 }
 
 ///|
-pub fn ExtendedAttrs::underline_variant_offset(self : ExtendedAttrs) -> Int {
+pub fn ExtendedAttrs::underline_variant_offset(self : ExtendedAttrs) -> Int32 {
   self.underline_variant_offset
 }
 
 ///|
 pub fn ExtendedAttrs::set_underline_variant_offset(
   self : ExtendedAttrs,
-  value : Int,
+  value : Int32,
 ) -> Unit {
   self.underline_variant_offset = value & 7
 }
 
 ///|
-pub fn ExtendedAttrs::url_id(self : ExtendedAttrs) -> Int {
+pub fn ExtendedAttrs::url_id(self : ExtendedAttrs) -> Int32 {
   self.url_id
 }
 
 ///|
-pub fn ExtendedAttrs::set_url_id(self : ExtendedAttrs, value : Int) -> Unit {
+pub fn ExtendedAttrs::set_url_id(self : ExtendedAttrs, value : Int32) -> Unit {
   self.url_id = value
 }
 
@@ -96,38 +96,38 @@ pub fn ExtendedAttrs::is_empty(self : ExtendedAttrs) -> Bool {
 
 ///|
 struct AttributeData {
-  mut fg : Int
-  mut bg : Int
+  mut fg : Int32
+  mut bg : Int32
   extended : ExtendedAttrs
 }
 
 ///|
 pub fn AttributeData::new() -> AttributeData {
-  { fg: 0, bg: 0, extended: ExtendedAttrs::new() }
+  { fg: 0, bg: 0, extended: ExtendedAttrs::new(), }
 }
 
 ///|
 pub fn AttributeData::clone(self : AttributeData) -> AttributeData {
-  { fg: self.fg, bg: self.bg, extended: self.extended.clone() }
+  { fg: self.fg, bg: self.bg, extended: self.extended.clone(), }
 }
 
 ///|
-pub fn AttributeData::fg(self : AttributeData) -> Int {
+pub fn AttributeData::fg(self : AttributeData) -> Int32 {
   self.fg
 }
 
 ///|
-pub fn AttributeData::set_fg(self : AttributeData, value : Int) -> Unit {
+pub fn AttributeData::set_fg(self : AttributeData, value : Int32) -> Unit {
   self.fg = value
 }
 
 ///|
-pub fn AttributeData::bg(self : AttributeData) -> Int {
+pub fn AttributeData::bg(self : AttributeData) -> Int32 {
   self.bg
 }
 
 ///|
-pub fn AttributeData::set_bg(self : AttributeData, value : Int) -> Unit {
+pub fn AttributeData::set_bg(self : AttributeData, value : Int32) -> Unit {
   self.bg = value
 }
 
@@ -137,12 +137,12 @@ pub fn AttributeData::extended(self : AttributeData) -> ExtendedAttrs {
 }
 
 ///|
-pub fn AttributeData::to_color_rgb(value : Int) -> (Int, Int, Int) {
+pub fn AttributeData::to_color_rgb(value : Int32) -> (Int32, Int32, Int32) {
   ((value >> RedShift) & 255, (value >> GreenShift) & 255, value & 255)
 }
 
 ///|
-pub fn AttributeData::from_color_rgb(value : (Int, Int, Int)) -> Int {
+pub fn AttributeData::from_color_rgb(value : (Int32, Int32, Int32)) -> Int32 {
   ((value.0 & 255) << RedShift) |
   ((value.1 & 255) << GreenShift) |
   (value.2 & 255)
@@ -199,12 +199,12 @@ pub fn AttributeData::is_overline(self : AttributeData) -> Bool {
 }
 
 ///|
-pub fn AttributeData::get_fg_color_mode(self : AttributeData) -> Int {
+pub fn AttributeData::get_fg_color_mode(self : AttributeData) -> Int32 {
   self.fg & CmMask
 }
 
 ///|
-pub fn AttributeData::get_bg_color_mode(self : AttributeData) -> Int {
+pub fn AttributeData::get_bg_color_mode(self : AttributeData) -> Int32 {
   self.bg & CmMask
 }
 
@@ -246,7 +246,7 @@ pub fn AttributeData::is_attribute_default(self : AttributeData) -> Bool {
 }
 
 ///|
-pub fn AttributeData::get_fg_color(self : AttributeData) -> Int {
+pub fn AttributeData::get_fg_color(self : AttributeData) -> Int32 {
   match self.get_fg_color_mode() {
     CmP16 | CmP256 => self.fg & PcolorMask
     CmRgb => self.fg & RgbMask
@@ -255,7 +255,7 @@ pub fn AttributeData::get_fg_color(self : AttributeData) -> Int {
 }
 
 ///|
-pub fn AttributeData::get_bg_color(self : AttributeData) -> Int {
+pub fn AttributeData::get_bg_color(self : AttributeData) -> Int32 {
   match self.get_bg_color_mode() {
     CmP16 | CmP256 => self.bg & PcolorMask
     CmRgb => self.bg & RgbMask
@@ -278,7 +278,7 @@ pub fn AttributeData::update_extended(self : AttributeData) -> Unit {
 }
 
 ///|
-pub fn AttributeData::get_underline_color(self : AttributeData) -> Int {
+pub fn AttributeData::get_underline_color(self : AttributeData) -> Int32 {
   if self.has_extended_attrs() {
     match self.extended.underline_color() & CmMask {
       CmP16 | CmP256 => self.extended.underline_color() & PcolorMask
@@ -291,7 +291,7 @@ pub fn AttributeData::get_underline_color(self : AttributeData) -> Int {
 }
 
 ///|
-pub fn AttributeData::get_underline_color_mode(self : AttributeData) -> Int {
+pub fn AttributeData::get_underline_color_mode(self : AttributeData) -> Int32 {
   if self.has_extended_attrs() {
     self.extended.underline_color() & CmMask
   } else {
@@ -343,6 +343,8 @@ pub fn AttributeData::get_underline_style(
 }
 
 ///|
-pub fn AttributeData::get_underline_variant_offset(self : AttributeData) -> Int {
+pub fn AttributeData::get_underline_variant_offset(
+  self : AttributeData,
+) -> Int32 {
   self.extended.underline_variant_offset()
 }

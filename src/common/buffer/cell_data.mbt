@@ -1,23 +1,23 @@
 ///|
 struct CharData {
-  attr : Int
+  attr : Int32
   chars : String
-  width : Int
-  code : Int
+  width : Int32
+  code : Int32
 } derive(Eq, Debug)
 
 ///|
 pub fn CharData::new(
-  attr : Int,
+  attr : Int32,
   chars : String,
-  width : Int,
-  code : Int,
+  width : Int32,
+  code : Int32,
 ) -> CharData {
-  { attr, chars, width, code }
+  { attr, chars, width, code, }
 }
 
 ///|
-pub fn CharData::attr(self : CharData) -> Int {
+pub fn CharData::attr(self : CharData) -> Int32 {
   self.attr
 }
 
@@ -27,20 +27,20 @@ pub fn CharData::chars(self : CharData) -> String {
 }
 
 ///|
-pub fn CharData::width(self : CharData) -> Int {
+pub fn CharData::width(self : CharData) -> Int32 {
   self.width
 }
 
 ///|
-pub fn CharData::code(self : CharData) -> Int {
+pub fn CharData::code(self : CharData) -> Int32 {
   self.code
 }
 
 ///|
 struct CellData {
-  mut content : Int
-  mut fg : Int
-  mut bg : Int
+  mut content : Int32
+  mut fg : Int32
+  mut bg : Int32
   extended : ExtendedAttrs
   mut combined_data : String
 }
@@ -75,22 +75,22 @@ pub fn CellData::clone(self : CellData) -> CellData {
 }
 
 ///|
-pub fn CellData::fg(self : CellData) -> Int {
+pub fn CellData::fg(self : CellData) -> Int32 {
   self.fg
 }
 
 ///|
-pub fn CellData::set_fg(self : CellData, value : Int) -> Unit {
+pub fn CellData::set_fg(self : CellData, value : Int32) -> Unit {
   self.fg = value
 }
 
 ///|
-pub fn CellData::bg(self : CellData) -> Int {
+pub fn CellData::bg(self : CellData) -> Int32 {
   self.bg
 }
 
 ///|
-pub fn CellData::set_bg(self : CellData, value : Int) -> Unit {
+pub fn CellData::set_bg(self : CellData, value : Int32) -> Unit {
   self.bg = value
 }
 
@@ -105,7 +105,7 @@ pub fn CellData::is_combined(self : CellData) -> Bool {
 }
 
 ///|
-pub fn CellData::get_width(self : CellData) -> Int {
+pub fn CellData::get_width(self : CellData) -> Int32 {
   self.content >> ContentWidthShift
 }
 
@@ -121,7 +121,7 @@ pub fn CellData::get_chars(self : CellData) -> String {
 }
 
 ///|
-pub fn CellData::get_code(self : CellData) -> Int {
+pub fn CellData::get_code(self : CellData) -> Int32 {
   if self.is_combined() {
     self.combined_data[self.combined_data.length() - 1].to_int()
   } else {

@@ -1,5 +1,5 @@
 ///|
-fn assert_blank_line(line : BufferLine, cols : Int) -> Unit raise {
+fn assert_blank_line(line : BufferLine, cols : Int32) -> Unit raise {
   guard line.length() == cols else {
     fail("blank line should have requested column count")
   }
@@ -76,7 +76,7 @@ test "Buffer finds wrapped range" {
   }
 
   guard buffer.get_wrapped_range_for_line(2) ==
-    WrappedRange::{ first: 1, last: 3 } else {
+    WrappedRange::{ first: 1, last: 3, } else {
     fail("wrapped range should scan upward and downward")
   }
 }

@@ -1,122 +1,122 @@
 ///|
-pub const ParserStateGround : Int = 0
+pub const ParserStateGround : Int32 = 0
 
 ///|
-pub const ParserStateEscape : Int = 1
+pub const ParserStateEscape : Int32 = 1
 
 ///|
-pub const ParserStateEscapeIntermediate : Int = 2
+pub const ParserStateEscapeIntermediate : Int32 = 2
 
 ///|
-pub const ParserStateCsiEntry : Int = 3
+pub const ParserStateCsiEntry : Int32 = 3
 
 ///|
-pub const ParserStateCsiParam : Int = 4
+pub const ParserStateCsiParam : Int32 = 4
 
 ///|
-pub const ParserStateCsiIntermediate : Int = 5
+pub const ParserStateCsiIntermediate : Int32 = 5
 
 ///|
-pub const ParserStateCsiIgnore : Int = 6
+pub const ParserStateCsiIgnore : Int32 = 6
 
 ///|
-pub const ParserStateSosPmString : Int = 7
+pub const ParserStateSosPmString : Int32 = 7
 
 ///|
-pub const ParserStateOscString : Int = 8
+pub const ParserStateOscString : Int32 = 8
 
 ///|
-pub const ParserStateDcsEntry : Int = 9
+pub const ParserStateDcsEntry : Int32 = 9
 
 ///|
-pub const ParserStateDcsParam : Int = 10
+pub const ParserStateDcsParam : Int32 = 10
 
 ///|
-pub const ParserStateDcsIgnore : Int = 11
+pub const ParserStateDcsIgnore : Int32 = 11
 
 ///|
-pub const ParserStateDcsIntermediate : Int = 12
+pub const ParserStateDcsIntermediate : Int32 = 12
 
 ///|
-pub const ParserStateDcsPassthrough : Int = 13
+pub const ParserStateDcsPassthrough : Int32 = 13
 
 ///|
-pub const ParserStateApcEntry : Int = 14
+pub const ParserStateApcEntry : Int32 = 14
 
 ///|
-pub const ParserStateApcIntermediate : Int = 15
+pub const ParserStateApcIntermediate : Int32 = 15
 
 ///|
-pub const ParserStateApcPassthrough : Int = 16
+pub const ParserStateApcPassthrough : Int32 = 16
 
 ///|
-pub const ParserStateLength : Int = 17
+pub const ParserStateLength : Int32 = 17
 
 ///|
-pub const ParserActionIgnore : Int = 0
+pub const ParserActionIgnore : Int32 = 0
 
 ///|
-pub const ParserActionError : Int = 1
+pub const ParserActionError : Int32 = 1
 
 ///|
-pub const ParserActionPrint : Int = 2
+pub const ParserActionPrint : Int32 = 2
 
 ///|
-pub const ParserActionExecute : Int = 3
+pub const ParserActionExecute : Int32 = 3
 
 ///|
-pub const ParserActionOscStart : Int = 4
+pub const ParserActionOscStart : Int32 = 4
 
 ///|
-pub const ParserActionOscPut : Int = 5
+pub const ParserActionOscPut : Int32 = 5
 
 ///|
-pub const ParserActionOscEnd : Int = 6
+pub const ParserActionOscEnd : Int32 = 6
 
 ///|
-pub const ParserActionCsiDispatch : Int = 7
+pub const ParserActionCsiDispatch : Int32 = 7
 
 ///|
-pub const ParserActionParam : Int = 8
+pub const ParserActionParam : Int32 = 8
 
 ///|
-pub const ParserActionCollect : Int = 9
+pub const ParserActionCollect : Int32 = 9
 
 ///|
-pub const ParserActionEscDispatch : Int = 10
+pub const ParserActionEscDispatch : Int32 = 10
 
 ///|
-pub const ParserActionClear : Int = 11
+pub const ParserActionClear : Int32 = 11
 
 ///|
-pub const ParserActionDcsHook : Int = 12
+pub const ParserActionDcsHook : Int32 = 12
 
 ///|
-pub const ParserActionDcsPut : Int = 13
+pub const ParserActionDcsPut : Int32 = 13
 
 ///|
-pub const ParserActionDcsUnhook : Int = 14
+pub const ParserActionDcsUnhook : Int32 = 14
 
 ///|
-pub const ParserActionApcStart : Int = 15
+pub const ParserActionApcStart : Int32 = 15
 
 ///|
-pub const ParserActionApcPut : Int = 16
+pub const ParserActionApcPut : Int32 = 16
 
 ///|
-pub const ParserActionApcEnd : Int = 17
+pub const ParserActionApcEnd : Int32 = 17
 
 ///|
-const TransitionActionShift : Int = 8
+const TransitionActionShift : Int32 = 8
 
 ///|
-const TransitionStateMask : Int = 255
+const TransitionStateMask : Int32 = 255
 
 ///|
-const IndexStateShift : Int = 8
+const IndexStateShift : Int32 = 8
 
 ///|
-const NonAsciiPrintable : Int = 0xA0
+const NonAsciiPrintable : Int32 = 0xA0
 
 ///|
-const PayloadLimit : Int = 10000000
+const PayloadLimit : Int32 = 10000000

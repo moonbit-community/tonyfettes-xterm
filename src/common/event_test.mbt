@@ -1,13 +1,13 @@
 ///|
 test "event/fire with zero listeners is inert" {
-  let emitter : Emitter[Int] = Emitter::new()
+  let emitter : Emitter[Int32] = Emitter::new()
   emitter.fire(42)
 }
 
 ///|
 test "event/fire with one listener" {
-  let emitter : Emitter[Int] = Emitter::new()
-  let received : Ref[Int?] = Ref::{ val: None }
+  let emitter : Emitter[Int32] = Emitter::new()
+  let received : Ref[Int32?] = Ref::{ val: None, }
 
   emitter.event(fn(value) { received.val = Some(value) }) |> ignore
   emitter.fire(42)
@@ -19,8 +19,8 @@ test "event/fire with one listener" {
 
 ///|
 test "event/fire with multiple listeners preserves registration order" {
-  let emitter : Emitter[Int] = Emitter::new()
-  let results : Array[Int] = []
+  let emitter : Emitter[Int32] = Emitter::new()
+  let results : Array[Int32] = []
 
   emitter.event(fn(value) { results.push(value) }) |> ignore
   emitter.event(fn(value) { results.push(value * 2) }) |> ignore
@@ -33,9 +33,9 @@ test "event/fire with multiple listeners preserves registration order" {
 
 ///|
 test "event/listener removal during fire uses listener snapshot" {
-  let emitter : Emitter[Int] = Emitter::new()
+  let emitter : Emitter[Int32] = Emitter::new()
   let results : Array[String] = []
-  let disposable_ref : Ref[Disposable?] = Ref::{ val: None }
+  let disposable_ref : Ref[Disposable?] = Ref::{ val: None, }
 
   emitter.event(fn(_) { results.push("first") }) |> ignore
   let disposable = emitter.event(fn(_) {
@@ -50,13 +50,13 @@ test "event/listener removal during fire uses listener snapshot" {
 
   emitter.fire(1)
 
-  inspect(results, content="[\"first\", \"second\", \"third\"]")
+  debug_inspect(results, content="[\"first\", \"second\", \"third\"]")
 }
 
 ///|
 test "event/dispose emitter clears listeners" {
-  let emitter : Emitter[Int] = Emitter::new()
-  let called : Ref[Bool] = Ref::{ val: false }
+  let emitter : Emitter[Int32] = Emitter::new()
+  let called : Ref[Bool] = Ref::{ val: false, }
 
   emitter.event(fn(_) { called.val = true }) |> ignore
   emitter.dispose()
@@ -67,8 +67,8 @@ test "event/dispose emitter clears listeners" {
 
 ///|
 test "event/dispose listener removes only that listener" {
-  let emitter : Emitter[Int] = Emitter::new()
-  let count : Ref[Int] = Ref::{ val: 0 }
+  let emitter : Emitter[Int32] = Emitter::new()
+  let count : Ref[Int32] = Ref::{ val: 0, }
 
   let disposable = emitter.event(fn(_) { count.val += 1 })
   emitter.fire(1)

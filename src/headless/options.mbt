@@ -1,43 +1,43 @@
 ///|
-const DefaultCols : Int = 80
+const DefaultCols : Int32 = 80
 
 ///|
-const DefaultRows : Int = 24
+const DefaultRows : Int32 = 24
 
 ///|
-const DefaultScrollback : Int = 1000
+const DefaultScrollback : Int32 = 1000
 
 ///|
-const DefaultFontSize : Int = 15
+const DefaultFontSize : Int32 = 15
 
 ///|
-const DefaultLineHeight : Int = 1
+const DefaultLineHeight : Int32 = 1
 
 ///|
-const DefaultCursorWidth : Int = 1
+const DefaultCursorWidth : Int32 = 1
 
 ///|
 pub(all) struct TerminalOptions {
-  cols : Int
-  rows : Int
-  scrollback : Int
+  cols : Int32
+  rows : Int32
+  scrollback : Int32
   allow_proposed_api : Bool
-  font_size : Int
+  font_size : Int32
   font_family : String
-  line_height : Int
-  cursor_width : Int
+  line_height : Int32
+  cursor_width : Int32
 } derive(Eq, Debug)
 
 ///|
 pub fn TerminalOptions::new(
-  cols? : Int = DefaultCols,
-  rows? : Int = DefaultRows,
-  scrollback? : Int = DefaultScrollback,
-  allow_proposed_api? : Bool = false,
-  font_size? : Int = DefaultFontSize,
-  font_family? : String = "monospace",
-  line_height? : Int = DefaultLineHeight,
-  cursor_width? : Int = DefaultCursorWidth,
+  cols~ : Int32 = DefaultCols,
+  rows~ : Int32 = DefaultRows,
+  scrollback~ : Int32 = DefaultScrollback,
+  allow_proposed_api~ : Bool = false,
+  font_size~ : Int32 = DefaultFontSize,
+  font_family~ : String = "monospace",
+  line_height~ : Int32 = DefaultLineHeight,
+  cursor_width~ : Int32 = DefaultCursorWidth,
 ) -> TerminalOptions {
   {
     cols: if cols < 1 {

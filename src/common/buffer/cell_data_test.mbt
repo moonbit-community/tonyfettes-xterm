@@ -85,7 +85,7 @@ test "CellData converts wide char data" {
 fn create_styled_cell(
   char : String,
   style : UnderlineStyle,
-  underline_color : Int,
+  underline_color : Int32,
 ) -> CellData {
   let cell = CellData::new()
   let fg = CmP256 | 12 | FgBold | FgUnderline

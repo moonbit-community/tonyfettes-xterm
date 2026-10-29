@@ -1,0 +1,17 @@
+name = "feihaoxiang/xterm"
+
+version = "0.1.0"
+
+import {
+  "moonbit-community/rabbita@0.12.1",
+}
+
+readme = "README.md"
+
+repository = ""
+
+license = "MIT"
+
+keywords = ["terminal", "xterm"]
+
+description = "MoonBit implementation of xterm.js behavior"

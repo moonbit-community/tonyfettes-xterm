@@ -17,12 +17,16 @@ struct Terminal {
   mut wraparound_mode : Bool
   on_bell_emitter : @common.Emitter[Unit]
   on_line_feed_emitter : @common.Emitter[Unit]
-  on_scroll_emitter : @common.Emitter[Int]
+  on_scroll_emitter : @common.Emitter[Int32]
   on_title_change_emitter : @common.Emitter[String]
 }
 
 ///|
-pub fn Terminal::new(cols : Int, rows : Int, scrollback : Int) -> Terminal {
+pub fn Terminal::new(
+  cols : Int32,
+  rows : Int32,
+  scrollback : Int32,
+) -> Terminal {
   let terminal = {
     buffers: @buffer.BufferSet::new(cols, rows, scrollback),
     parser: @parser.EscapeSequenceParser::new(),
@@ -59,22 +63,22 @@ pub fn Terminal::buffers(self : Terminal) -> @buffer.BufferSet {
 }
 
 ///|
-pub fn Terminal::cursor_x(self : Terminal) -> Int {
+pub fn Terminal::cursor_x(self : Terminal) -> Int32 {
   self.buffer().x()
 }
 
 ///|
-pub fn Terminal::cursor_y(self : Terminal) -> Int {
+pub fn Terminal::cursor_y(self : Terminal) -> Int32 {
   self.buffer().y()
 }
 
 ///|
-pub fn Terminal::cols(self : Terminal) -> Int {
+pub fn Terminal::cols(self : Terminal) -> Int32 {
   self.buffer().cols()
 }
 
 ///|
-pub fn Terminal::rows(self : Terminal) -> Int {
+pub fn Terminal::rows(self : Terminal) -> Int32 {
   self.buffer().rows()
 }
 
@@ -157,7 +161,7 @@ pub fn Terminal::on_line_feed(
 ///|
 pub fn Terminal::on_scroll(
   self : Terminal,
-  listener : (Int) -> Unit,
+  listener : (Int32) -> Unit,
 ) -> @common.Disposable {
   self.on_scroll_emitter.event(listener)
 }
@@ -171,7 +175,7 @@ pub fn Terminal::on_title_change(
 }
 
 ///|
-fn clamp(value : Int, low : Int, high : Int) -> Int {
+fn clamp(value : Int32, low : Int32, high : Int32) -> Int32 {
   if value < low {
     low
   } else if value > high {
@@ -182,12 +186,12 @@ fn clamp(value : Int, low : Int, high : Int) -> Int {
 }
 
 ///|
-fn clear_bits(value : Int, mask : Int) -> Int {
+fn clear_bits(value : Int32, mask : Int32) -> Int32 {
   value & (-mask - 1)
 }
 
 ///|
-fn param_or(params : @parser.Params, index : Int, fallback : Int) -> Int {
+fn param_or(params : @parser.Params, index : Int32, fallback : Int32) -> Int32 {
   if index >= params.length() {
     return fallback
   }
@@ -201,7 +205,7 @@ fn param_or(params : @parser.Params, index : Int, fallback : Int) -> Int {
 
 ///|
 fn csi_id(final_byte : String) -> @parser.FunctionIdentifier {
-  { prefix: None, intermediates: None, final_byte }
+  { prefix: None, intermediates: None, final_byte, }
 }
 
 ///|
@@ -209,7 +213,7 @@ fn csi_id_with_prefix(
   prefix : String,
   final_byte : String,
 ) -> @parser.FunctionIdentifier {
-  { prefix: Some(prefix), intermediates: None, final_byte }
+  { prefix: Some(prefix), intermediates: None, final_byte, }
 }
 
 ///|
@@ -421,25 +425,25 @@ fn Terminal::install_input_handlers(self : Terminal) -> Unit {
 }
 
 ///|
-fn Terminal::set_cursor_x(self : Terminal, x : Int) -> Unit {
+fn Terminal::set_cursor_x(self : Terminal, x : Int32) -> Unit {
   let buffer = self.buffer()
   buffer.set_x(clamp(x, 0, buffer.cols() - 1))
 }
 
 ///|
-fn Terminal::set_cursor_y(self : Terminal, y : Int) -> Unit {
+fn Terminal::set_cursor_y(self : Terminal, y : Int32) -> Unit {
   let buffer = self.buffer()
   buffer.set_y(clamp(y, 0, buffer.rows() - 1))
 }
 
 ///|
-fn Terminal::set_cursor(self : Terminal, x : Int, y : Int) -> Unit {
+fn Terminal::set_cursor(self : Terminal, x : Int32, y : Int32) -> Unit {
   self.set_cursor_x(x)
   self.set_cursor_y(y)
 }
 
 ///|
-fn Terminal::move_cursor(self : Terminal, dx : Int, dy : Int) -> Unit {
+fn Terminal::move_cursor(self : Terminal, dx : Int32, dy : Int32) -> Unit {
   let buffer = self.buffer()
   self.set_cursor(buffer.x() + dx, buffer.y() + dy)
 }
@@ -485,7 +489,10 @@ fn Terminal::tab(self : Terminal) -> Unit {
 }
 
 ///|
-fn Terminal::line_at_active_y(self : Terminal, y : Int) -> @buffer.BufferLine? {
+fn Terminal::line_at_active_y(
+  self : Terminal,
+  y : Int32,
+) -> @buffer.BufferLine? {
   let buffer = self.buffer()
   buffer.lines().get(buffer.ybase() + y)
 }
@@ -501,7 +508,7 @@ fn Terminal::blank_line(self : Terminal) -> @buffer.BufferLine {
 }
 
 ///|
-fn is_combining(codepoint : Int) -> Bool {
+fn is_combining(codepoint : Int32) -> Bool {
   (codepoint >= 0x0300 && codepoint <= 0x036F) ||
   (codepoint >= 0x1AB0 && codepoint <= 0x1AFF) ||
   (codepoint >= 0x1DC0 && codepoint <= 0x1DFF) ||
@@ -510,7 +517,7 @@ fn is_combining(codepoint : Int) -> Bool {
 }
 
 ///|
-fn is_wide(codepoint : Int) -> Bool {
+fn is_wide(codepoint : Int32) -> Bool {
   (codepoint >= 0x1100 && codepoint <= 0x115F) ||
   (codepoint >= 0x2329 && codepoint <= 0x232A) ||
   (codepoint >= 0x2E80 && codepoint <= 0xA4CF) ||
@@ -523,7 +530,7 @@ fn is_wide(codepoint : Int) -> Bool {
 }
 
 ///|
-fn char_width(codepoint : Int) -> Int {
+fn char_width(codepoint : Int32) -> Int32 {
   if is_combining(codepoint) {
     0
   } else if is_wide(codepoint) {
@@ -541,7 +548,7 @@ fn Terminal::print(self : Terminal, data : String) -> Unit {
 }
 
 ///|
-fn Terminal::print_codepoint(self : Terminal, codepoint : Int) -> Unit {
+fn Terminal::print_codepoint(self : Terminal, codepoint : Int32) -> Unit {
   let width = char_width(codepoint)
   let buffer = self.buffer()
   if width == 0 {
@@ -579,7 +586,7 @@ fn Terminal::print_codepoint(self : Terminal, codepoint : Int) -> Unit {
 }
 
 ///|
-fn Terminal::insert_chars(self : Terminal, count : Int) -> Unit {
+fn Terminal::insert_chars(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   if buffer.x() >= buffer.cols() {
     return
@@ -591,7 +598,7 @@ fn Terminal::insert_chars(self : Terminal, count : Int) -> Unit {
 }
 
 ///|
-fn Terminal::delete_chars(self : Terminal, count : Int) -> Unit {
+fn Terminal::delete_chars(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   if buffer.x() >= buffer.cols() {
     return
@@ -603,7 +610,7 @@ fn Terminal::delete_chars(self : Terminal, count : Int) -> Unit {
 }
 
 ///|
-fn Terminal::erase_chars(self : Terminal, count : Int) -> Unit {
+fn Terminal::erase_chars(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   match buffer.line_at_cursor() {
     Some(line) =>
@@ -613,7 +620,7 @@ fn Terminal::erase_chars(self : Terminal, count : Int) -> Unit {
 }
 
 ///|
-fn Terminal::erase_in_line(self : Terminal, mode : Int) -> Unit {
+fn Terminal::erase_in_line(self : Terminal, mode : Int32) -> Unit {
   let buffer = self.buffer()
   match buffer.line_at_cursor() {
     Some(line) =>
@@ -629,9 +636,9 @@ fn Terminal::erase_in_line(self : Terminal, mode : Int) -> Unit {
 ///|
 fn Terminal::erase_line_range(
   self : Terminal,
-  y : Int,
-  start : Int,
-  end : Int,
+  y : Int32,
+  start : Int32,
+  end : Int32,
 ) -> Unit {
   match self.line_at_active_y(y) {
     Some(line) => line.replace_cells(start, end, self.blank_cell())
@@ -640,7 +647,7 @@ fn Terminal::erase_line_range(
 }
 
 ///|
-fn Terminal::erase_in_display(self : Terminal, mode : Int) -> Unit {
+fn Terminal::erase_in_display(self : Terminal, mode : Int32) -> Unit {
   let buffer = self.buffer()
   match mode {
     1 => {
@@ -669,7 +676,7 @@ fn Terminal::erase_in_display(self : Terminal, mode : Int) -> Unit {
 }
 
 ///|
-fn Terminal::insert_lines(self : Terminal, count : Int) -> Unit {
+fn Terminal::insert_lines(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   if buffer.y() < buffer.scroll_top() || buffer.y() > buffer.scroll_bottom() {
     return
@@ -688,7 +695,7 @@ fn Terminal::insert_lines(self : Terminal, count : Int) -> Unit {
 }
 
 ///|
-fn Terminal::delete_lines(self : Terminal, count : Int) -> Unit {
+fn Terminal::delete_lines(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   if buffer.y() < buffer.scroll_top() || buffer.y() > buffer.scroll_bottom() {
     return
@@ -713,7 +720,7 @@ fn Terminal::is_full_scroll_region(self : Terminal) -> Bool {
 }
 
 ///|
-fn Terminal::scroll_up(self : Terminal, count : Int) -> Unit {
+fn Terminal::scroll_up(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   for _i = 0; _i < count; _i = _i + 1 {
     let old_ydisp = buffer.ydisp()
@@ -733,7 +740,7 @@ fn Terminal::scroll_up(self : Terminal, count : Int) -> Unit {
 }
 
 ///|
-fn Terminal::scroll_down(self : Terminal, count : Int) -> Unit {
+fn Terminal::scroll_down(self : Terminal, count : Int32) -> Unit {
   let buffer = self.buffer()
   for _i = 0; _i < count; _i = _i + 1 {
     let base = buffer.ybase()
@@ -847,7 +854,7 @@ fn Terminal::reset_attrs(self : Terminal) -> Unit {
 }
 
 ///|
-fn Terminal::set_fg_color(self : Terminal, value : Int) -> Unit {
+fn Terminal::set_fg_color(self : Terminal, value : Int32) -> Unit {
   let color_mask = @buffer.CmMask | @buffer.RgbMask
   self.current_attr.set_fg(
     clear_bits(self.current_attr.fg(), color_mask) | value,
@@ -855,7 +862,7 @@ fn Terminal::set_fg_color(self : Terminal, value : Int) -> Unit {
 }
 
 ///|
-fn Terminal::set_bg_color(self : Terminal, value : Int) -> Unit {
+fn Terminal::set_bg_color(self : Terminal, value : Int32) -> Unit {
   let color_mask = @buffer.CmMask | @buffer.RgbMask
   self.current_attr.set_bg(
     clear_bits(self.current_attr.bg(), color_mask) | value,
@@ -863,7 +870,7 @@ fn Terminal::set_bg_color(self : Terminal, value : Int) -> Unit {
 }
 
 ///|
-fn underline_style(value : Int) -> @buffer.UnderlineStyle {
+fn underline_style(value : Int32) -> @buffer.UnderlineStyle {
   match value {
     2 => @buffer.UnderlineStyle::Double
     3 => @buffer.UnderlineStyle::Curly
@@ -896,9 +903,9 @@ fn Terminal::clear_underline(self : Terminal) -> Unit {
 fn Terminal::apply_sgr_color(
   self : Terminal,
   params : @parser.Params,
-  index : Int,
+  index : Int32,
   foreground : Bool,
-) -> Int {
+) -> Int32 {
   if index + 1 >= params.length() {
     return index + 1
   }
@@ -978,13 +985,13 @@ fn Terminal::char_attributes(self : Terminal, params : @parser.Params) -> Unit {
         self.current_attr.set_fg(
           clear_bits(self.current_attr.fg(), @buffer.FgInvisible),
         )
-      30..=37 => self.set_fg_color(@buffer.CmP16 | (code - 30))
+      30..<=37 => self.set_fg_color(@buffer.CmP16 | (code - 30))
       38 => {
         i = self.apply_sgr_color(params, i, true)
         continue
       }
       39 => self.set_fg_color(0)
-      40..=47 => self.set_bg_color(@buffer.CmP16 | (code - 40))
+      40..<=47 => self.set_bg_color(@buffer.CmP16 | (code - 40))
       48 => {
         i = self.apply_sgr_color(params, i, false)
         continue
@@ -996,8 +1003,8 @@ fn Terminal::char_attributes(self : Terminal, params : @parser.Params) -> Unit {
         self.current_attr.set_bg(
           clear_bits(self.current_attr.bg(), @buffer.BgOverline),
         )
-      90..=97 => self.set_fg_color(@buffer.CmP16 | (code - 90 + 8))
-      100..=107 => self.set_bg_color(@buffer.CmP16 | (code - 100 + 8))
+      90..<=97 => self.set_fg_color(@buffer.CmP16 | (code - 90 + 8))
+      100..<=107 => self.set_bg_color(@buffer.CmP16 | (code - 100 + 8))
       _ => ()
     }
     i += 1
@@ -1005,7 +1012,7 @@ fn Terminal::char_attributes(self : Terminal, params : @parser.Params) -> Unit {
 }
 
 ///|
-pub fn Terminal::resize(self : Terminal, cols : Int, rows : Int) -> Unit {
+pub fn Terminal::resize(self : Terminal, cols : Int32, rows : Int32) -> Unit {
   self.buffers.resize(
     if cols < 1 {
       1
@@ -1021,7 +1028,7 @@ pub fn Terminal::resize(self : Terminal, cols : Int, rows : Int) -> Unit {
 }
 
 ///|
-pub fn Terminal::scroll_lines(self : Terminal, amount : Int) -> Unit {
+pub fn Terminal::scroll_lines(self : Terminal, amount : Int32) -> Unit {
   let buffer = self.buffer()
   let next = clamp(buffer.ydisp() + amount, 0, buffer.ybase())
   if next != buffer.ydisp() {
@@ -1042,7 +1049,7 @@ pub fn Terminal::scroll_to_bottom(self : Terminal) -> Unit {
 }
 
 ///|
-pub fn Terminal::scroll_to_line(self : Terminal, line : Int) -> Unit {
+pub fn Terminal::scroll_to_line(self : Terminal, line : Int32) -> Unit {
   let buffer = self.buffer()
   let target = clamp(line, 0, buffer.ybase())
   self.scroll_lines(target - buffer.ydisp())
@@ -1110,7 +1117,7 @@ pub fn Terminal::register_esc_handler(
 ///|
 pub fn Terminal::register_osc_handler(
   self : Terminal,
-  ident : Int,
+  ident : Int32,
   handler : (String) -> Bool,
 ) -> @parser.Disposable {
   self.parser.register_osc_handler(ident, @parser.OscHandler::new(handler))

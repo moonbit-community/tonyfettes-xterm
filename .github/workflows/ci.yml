@@ -1,0 +1,26 @@
+name: Headless core
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [latest, nightly]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: moonbit-community/setup-moonbit@v0.1.2
+        with:
+          version: ${{ matrix.toolchain }}
+      - run: moon version --all
+      # Browser packages depend on an older vendored Rabbita release.
+      # Keep core validation independent until that dependency is upgraded.
+      - run: moon check src/common src/common/buffer src/common/parser src/terminal src/headless
+      - run: moon test src/common src/common/buffer src/common/parser src/terminal src/headless
+      - run: moon fmt --check src/common src/common/buffer src/common/parser src/terminal src/headless

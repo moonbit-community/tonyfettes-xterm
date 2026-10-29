@@ -9,8 +9,8 @@ fn expect_strings(
 
 ///|
 fn expect_ints(
-  list : CircularList[Int],
-  expected : Array[Int?],
+  list : CircularList[Int32],
+  expected : Array[Int32?],
   label : String,
 ) -> Unit raise {
   guard list.to_array() == expected else { fail(label) }
@@ -116,7 +116,7 @@ test "CircularList trims from start" {
 ///|
 test "CircularList emits trim events" {
   let list = CircularList::new(2)
-  let trims : Array[Int] = []
+  let trims : Array[Int32] = []
   list.on_trim(fn(amount) { trims.push(amount) }) |> ignore
 
   list.push("1")
