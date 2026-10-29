@@ -12,7 +12,7 @@ fn default_line_cell() -> CellData {
 }
 
 ///|
-fn codepoint_to_string(codepoint : Int) -> String {
+fn codepoint_to_string(codepoint : Int32) -> String {
   String::from_array([codepoint.unsafe_to_char()])
 }
 
@@ -35,7 +35,7 @@ fn copy_cell_into(target : CellData, source : CellData) -> Unit {
 
 ///|
 pub fn BufferLine::new(
-  cols : Int,
+  cols : Int32,
   fill_cell_data : CellData?,
   is_wrapped : Bool,
 ) -> BufferLine {
@@ -47,11 +47,11 @@ pub fn BufferLine::new(
   for _i = 0; _i < cols; _i = _i + 1 {
     cells.push(fill.clone())
   }
-  { cells, is_wrapped }
+  { cells, is_wrapped, }
 }
 
 ///|
-pub fn BufferLine::length(self : BufferLine) -> Int {
+pub fn BufferLine::length(self : BufferLine) -> Int32 {
   self.cells.length()
 }
 
@@ -66,68 +66,68 @@ pub fn BufferLine::set_is_wrapped(self : BufferLine, value : Bool) -> Unit {
 }
 
 ///|
-pub fn BufferLine::get(self : BufferLine, index : Int) -> CharData {
+pub fn BufferLine::get(self : BufferLine, index : Int32) -> CharData {
   self.cells[index].get_as_char_data()
 }
 
 ///|
 pub fn BufferLine::set(
   self : BufferLine,
-  index : Int,
+  index : Int32,
   value : CharData,
 ) -> Unit {
   self.set_cell(index, CellData::from_char_data(value))
 }
 
 ///|
-pub fn BufferLine::get_width(self : BufferLine, index : Int) -> Int {
+pub fn BufferLine::get_width(self : BufferLine, index : Int32) -> Int32 {
   self.cells[index].get_width()
 }
 
 ///|
-pub fn BufferLine::has_width(self : BufferLine, index : Int) -> Bool {
+pub fn BufferLine::has_width(self : BufferLine, index : Int32) -> Bool {
   (self.cells[index].content & ContentWidthMask) != 0
 }
 
 ///|
-pub fn BufferLine::get_fg(self : BufferLine, index : Int) -> Int {
+pub fn BufferLine::get_fg(self : BufferLine, index : Int32) -> Int32 {
   self.cells[index].fg
 }
 
 ///|
-pub fn BufferLine::get_bg(self : BufferLine, index : Int) -> Int {
+pub fn BufferLine::get_bg(self : BufferLine, index : Int32) -> Int32 {
   self.cells[index].bg
 }
 
 ///|
-pub fn BufferLine::has_content(self : BufferLine, index : Int) -> Bool {
+pub fn BufferLine::has_content(self : BufferLine, index : Int32) -> Bool {
   (self.cells[index].content & ContentHasContentMask) != 0
 }
 
 ///|
-pub fn BufferLine::get_codepoint(self : BufferLine, index : Int) -> Int {
+pub fn BufferLine::get_codepoint(self : BufferLine, index : Int32) -> Int32 {
   self.cells[index].get_code()
 }
 
 ///|
-pub fn BufferLine::is_combined(self : BufferLine, index : Int) -> Bool {
+pub fn BufferLine::is_combined(self : BufferLine, index : Int32) -> Bool {
   self.cells[index].is_combined()
 }
 
 ///|
-pub fn BufferLine::get_string(self : BufferLine, index : Int) -> String {
+pub fn BufferLine::get_string(self : BufferLine, index : Int32) -> String {
   self.cells[index].get_chars()
 }
 
 ///|
-pub fn BufferLine::is_protected(self : BufferLine, index : Int) -> Bool {
+pub fn BufferLine::is_protected(self : BufferLine, index : Int32) -> Bool {
   (self.cells[index].bg & BgProtected) != 0
 }
 
 ///|
 pub fn BufferLine::load_cell(
   self : BufferLine,
-  index : Int,
+  index : Int32,
   cell : CellData,
 ) -> CellData {
   copy_cell_into(cell, self.cells[index])
@@ -137,7 +137,7 @@ pub fn BufferLine::load_cell(
 ///|
 pub fn BufferLine::set_cell(
   self : BufferLine,
-  index : Int,
+  index : Int32,
   cell : CellData,
 ) -> Unit {
   self.cells[index] = cell.clone()
@@ -146,9 +146,9 @@ pub fn BufferLine::set_cell(
 ///|
 pub fn BufferLine::set_cell_from_codepoint(
   self : BufferLine,
-  index : Int,
-  codepoint : Int,
-  width : Int,
+  index : Int32,
+  codepoint : Int32,
+  width : Int32,
   attrs : AttributeData,
 ) -> Unit {
   let cell = CellData::new()
@@ -162,9 +162,9 @@ pub fn BufferLine::set_cell_from_codepoint(
 ///|
 pub fn BufferLine::add_codepoint_to_cell(
   self : BufferLine,
-  index : Int,
-  codepoint : Int,
-  width : Int,
+  index : Int32,
+  codepoint : Int32,
+  width : Int32,
 ) -> Unit {
   let cell = self.cells[index].clone()
   let mut content = cell.content
@@ -187,8 +187,8 @@ pub fn BufferLine::add_codepoint_to_cell(
 ///|
 pub fn BufferLine::insert_cells(
   self : BufferLine,
-  pos : Int,
-  n : Int,
+  pos : Int32,
+  n : Int32,
   fill_cell_data : CellData,
 ) -> Unit {
   let length = self.length()
@@ -221,8 +221,8 @@ pub fn BufferLine::insert_cells(
 ///|
 pub fn BufferLine::delete_cells(
   self : BufferLine,
-  pos : Int,
-  n : Int,
+  pos : Int32,
+  n : Int32,
   fill_cell_data : CellData,
 ) -> Unit {
   let length = self.length()
@@ -254,8 +254,8 @@ pub fn BufferLine::delete_cells(
 ///|
 pub fn BufferLine::replace_cells(
   self : BufferLine,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   fill_cell_data : CellData,
 ) -> Unit {
   let length = self.length()
@@ -275,7 +275,7 @@ pub fn BufferLine::replace_cells(
 ///|
 pub fn BufferLine::resize(
   self : BufferLine,
-  cols : Int,
+  cols : Int32,
   fill_cell_data : CellData,
 ) -> Bool {
   let old_length = self.length()
@@ -315,7 +315,7 @@ pub fn BufferLine::clone(self : BufferLine) -> BufferLine {
 }
 
 ///|
-pub fn BufferLine::get_trimmed_length(self : BufferLine) -> Int {
+pub fn BufferLine::get_trimmed_length(self : BufferLine) -> Int32 {
   for i = self.length() - 1; i >= 0; i = i - 1 {
     if (self.cells[i].content & ContentHasContentMask) != 0 {
       return i + self.cells[i].get_width()
@@ -337,8 +337,8 @@ pub fn BufferLine::to_array(self : BufferLine) -> Array[CharData] {
 pub fn BufferLine::translate_to_string(
   self : BufferLine,
   trim_right : Bool,
-  start_col : Int,
-  end_col : Int,
+  start_col : Int32,
+  end_col : Int32,
 ) -> String {
   let mut start_col = start_col
   let mut end_col = end_col

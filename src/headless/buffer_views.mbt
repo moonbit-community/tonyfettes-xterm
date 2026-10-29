@@ -7,7 +7,7 @@ pub(all) enum BufferType {
 ///|
 struct BufferCellView {
   line : @buffer.BufferLine
-  index : Int
+  index : Int32
 }
 
 ///|
@@ -16,22 +16,22 @@ pub fn BufferCellView::get_chars(self : BufferCellView) -> String {
 }
 
 ///|
-pub fn BufferCellView::get_width(self : BufferCellView) -> Int {
+pub fn BufferCellView::get_width(self : BufferCellView) -> Int32 {
   self.line.get_width(self.index)
 }
 
 ///|
-pub fn BufferCellView::get_code(self : BufferCellView) -> Int {
+pub fn BufferCellView::get_code(self : BufferCellView) -> Int32 {
   self.line.get_codepoint(self.index)
 }
 
 ///|
-pub fn BufferCellView::get_fg(self : BufferCellView) -> Int {
+pub fn BufferCellView::get_fg(self : BufferCellView) -> Int32 {
   self.line.get_fg(self.index)
 }
 
 ///|
-pub fn BufferCellView::get_bg(self : BufferCellView) -> Int {
+pub fn BufferCellView::get_bg(self : BufferCellView) -> Int32 {
   self.line.get_bg(self.index)
 }
 
@@ -46,16 +46,16 @@ pub fn BufferLineView::is_wrapped(self : BufferLineView) -> Bool {
 }
 
 ///|
-pub fn BufferLineView::length(self : BufferLineView) -> Int {
+pub fn BufferLineView::length(self : BufferLineView) -> Int32 {
   self.line.length()
 }
 
 ///|
 pub fn BufferLineView::translate_to_string(
   self : BufferLineView,
-  trim_right? : Bool = false,
-  start_col? : Int = 0,
-  end_col? : Int = -1,
+  trim_right~ : Bool = false,
+  start_col~ : Int32 = 0,
+  end_col~ : Int32 = -1,
 ) -> String {
   let end_col = if end_col < 0 { self.line.length() } else { end_col }
   self.line.translate_to_string(trim_right, start_col, end_col)
@@ -64,12 +64,12 @@ pub fn BufferLineView::translate_to_string(
 ///|
 pub fn BufferLineView::get_cell(
   self : BufferLineView,
-  index : Int,
+  index : Int32,
 ) -> BufferCellView? {
   if index < 0 || index >= self.line.length() {
     None
   } else {
-    Some({ line: self.line, index })
+    Some({ line: self.line, index, })
   }
 }
 
@@ -85,32 +85,35 @@ pub fn BufferView::buffer_type(self : BufferView) -> BufferType {
 }
 
 ///|
-pub fn BufferView::cursor_x(self : BufferView) -> Int {
+pub fn BufferView::cursor_x(self : BufferView) -> Int32 {
   self.buffer.x()
 }
 
 ///|
-pub fn BufferView::cursor_y(self : BufferView) -> Int {
+pub fn BufferView::cursor_y(self : BufferView) -> Int32 {
   self.buffer.y()
 }
 
 ///|
-pub fn BufferView::viewport_y(self : BufferView) -> Int {
+pub fn BufferView::viewport_y(self : BufferView) -> Int32 {
   self.buffer.ydisp()
 }
 
 ///|
-pub fn BufferView::base_y(self : BufferView) -> Int {
+pub fn BufferView::base_y(self : BufferView) -> Int32 {
   self.buffer.ybase()
 }
 
 ///|
-pub fn BufferView::length(self : BufferView) -> Int {
+pub fn BufferView::length(self : BufferView) -> Int32 {
   self.buffer.lines().length()
 }
 
 ///|
-pub fn BufferView::get_line(self : BufferView, index : Int) -> BufferLineView? {
+pub fn BufferView::get_line(
+  self : BufferView,
+  index : Int32,
+) -> BufferLineView? {
   if index < 0 || index >= self.buffer.lines().length() {
     None
   } else {
@@ -130,18 +133,18 @@ struct BufferNamespace {
 pub fn BufferNamespace::active(self : BufferNamespace) -> BufferView {
   match self.core.buffers().active_kind() {
     @buffer.BufferKind::Normal =>
-      { buffer: self.core.buffers().normal(), buffer_type: BufferType::Normal }
+      { buffer: self.core.buffers().normal(), buffer_type: BufferType::Normal, }
     @buffer.BufferKind::Alt =>
-      { buffer: self.core.buffers().alt(), buffer_type: BufferType::Alternate }
+      { buffer: self.core.buffers().alt(), buffer_type: BufferType::Alternate, }
   }
 }
 
 ///|
 pub fn BufferNamespace::normal(self : BufferNamespace) -> BufferView {
-  { buffer: self.core.buffers().normal(), buffer_type: BufferType::Normal }
+  { buffer: self.core.buffers().normal(), buffer_type: BufferType::Normal, }
 }
 
 ///|
 pub fn BufferNamespace::alternate(self : BufferNamespace) -> BufferView {
-  { buffer: self.core.buffers().alt(), buffer_type: BufferType::Alternate }
+  { buffer: self.core.buffers().alt(), buffer_type: BufferType::Alternate, }
 }

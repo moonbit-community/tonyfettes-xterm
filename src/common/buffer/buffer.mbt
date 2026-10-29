@@ -1,30 +1,30 @@
 ///|
 pub(all) struct WrappedRange {
-  first : Int
-  last : Int
+  first : Int32
+  last : Int32
 } derive(Eq, Debug)
 
 ///|
 struct Buffer {
   lines : @common.CircularList[BufferLine]
-  mut ydisp : Int
-  mut ybase : Int
-  mut y : Int
-  mut x : Int
-  mut scroll_bottom : Int
-  mut scroll_top : Int
-  mut cols : Int
-  mut rows : Int
+  mut ydisp : Int32
+  mut ybase : Int32
+  mut y : Int32
+  mut x : Int32
+  mut scroll_bottom : Int32
+  mut scroll_top : Int32
+  mut cols : Int32
+  mut rows : Int32
   has_scrollback_flag : Bool
-  scrollback : Int
+  scrollback : Int32
 }
 
 ///|
 fn correct_buffer_length(
   has_scrollback : Bool,
-  rows : Int,
-  scrollback : Int,
-) -> Int {
+  rows : Int32,
+  scrollback : Int32,
+) -> Int32 {
   if has_scrollback {
     rows + scrollback
   } else {
@@ -40,9 +40,9 @@ fn default_attr_data() -> AttributeData {
 ///|
 pub fn Buffer::new(
   has_scrollback : Bool,
-  cols : Int,
-  rows : Int,
-  scrollback : Int,
+  cols : Int32,
+  rows : Int32,
+  scrollback : Int32,
 ) -> Buffer {
   {
     lines: @common.CircularList::new(
@@ -67,72 +67,72 @@ pub fn Buffer::lines(self : Buffer) -> @common.CircularList[BufferLine] {
 }
 
 ///|
-pub fn Buffer::cols(self : Buffer) -> Int {
+pub fn Buffer::cols(self : Buffer) -> Int32 {
   self.cols
 }
 
 ///|
-pub fn Buffer::rows(self : Buffer) -> Int {
+pub fn Buffer::rows(self : Buffer) -> Int32 {
   self.rows
 }
 
 ///|
-pub fn Buffer::x(self : Buffer) -> Int {
+pub fn Buffer::x(self : Buffer) -> Int32 {
   self.x
 }
 
 ///|
-pub fn Buffer::set_x(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::set_x(self : Buffer, value : Int32) -> Unit {
   self.x = value
 }
 
 ///|
-pub fn Buffer::y(self : Buffer) -> Int {
+pub fn Buffer::y(self : Buffer) -> Int32 {
   self.y
 }
 
 ///|
-pub fn Buffer::set_y(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::set_y(self : Buffer, value : Int32) -> Unit {
   self.y = value
 }
 
 ///|
-pub fn Buffer::ydisp(self : Buffer) -> Int {
+pub fn Buffer::ydisp(self : Buffer) -> Int32 {
   self.ydisp
 }
 
 ///|
-pub fn Buffer::set_ydisp(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::set_ydisp(self : Buffer, value : Int32) -> Unit {
   self.ydisp = value
 }
 
 ///|
-pub fn Buffer::ybase(self : Buffer) -> Int {
+pub fn Buffer::ybase(self : Buffer) -> Int32 {
   self.ybase
 }
 
 ///|
-pub fn Buffer::set_ybase(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::set_ybase(self : Buffer, value : Int32) -> Unit {
   self.ybase = value
 }
 
 ///|
-pub fn Buffer::scroll_bottom(self : Buffer) -> Int {
+pub fn Buffer::scroll_bottom(self : Buffer) -> Int32 {
   self.scroll_bottom
 }
 
 ///|
-pub fn Buffer::set_scroll_bottom(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::set_scroll_bottom(self : Buffer, value : Int32) -> Unit {
   self.scroll_bottom = value
 }
 
 ///|
-pub fn Buffer::scroll_top(self : Buffer) -> Int {
+pub fn Buffer::scroll_top(self : Buffer) -> Int32 {
   self.scroll_top
 }
 
 ///|
-pub fn Buffer::set_scroll_top(self : Buffer, value : Int) -> Unit {
+pub fn Buffer::set_scroll_top(self : Buffer, value : Int32) -> Unit {
   self.scroll_top = value
 }
 
@@ -219,7 +219,11 @@ pub fn Buffer::clear(self : Buffer) -> Unit {
 }
 
 ///|
-pub fn Buffer::resize(self : Buffer, new_cols : Int, new_rows : Int) -> Unit {
+pub fn Buffer::resize(
+  self : Buffer,
+  new_cols : Int32,
+  new_rows : Int32,
+) -> Unit {
   let null_cell = self.get_null_cell(Some(default_attr_data()))
   let new_max_length = correct_buffer_length(
     self.has_scrollback_flag,
@@ -259,10 +263,10 @@ pub fn Buffer::resize(self : Buffer, new_cols : Int, new_rows : Int) -> Unit {
 ///|
 pub fn Buffer::translate_buffer_line_to_string(
   self : Buffer,
-  line_index : Int,
+  line_index : Int32,
   trim_right : Bool,
-  start_col : Int,
-  end_col : Int,
+  start_col : Int32,
+  end_col : Int32,
 ) -> String {
   match self.lines.get(line_index) {
     Some(line) => line.translate_to_string(trim_right, start_col, end_col)
@@ -276,7 +280,7 @@ pub fn Buffer::line_at_cursor(self : Buffer) -> BufferLine? {
 }
 
 ///|
-pub fn Buffer::line_at_viewport_y(self : Buffer, y : Int) -> BufferLine? {
+pub fn Buffer::line_at_viewport_y(self : Buffer, y : Int32) -> BufferLine? {
   self.lines.get(self.ydisp + y)
 }
 
@@ -314,7 +318,7 @@ pub fn Buffer::viewport_to_string(self : Buffer, trim_right : Bool) -> String {
 ///|
 pub fn Buffer::get_wrapped_range_for_line(
   self : Buffer,
-  y : Int,
+  y : Int32,
 ) -> WrappedRange {
   let mut first = y
   let mut last = y
@@ -330,5 +334,5 @@ pub fn Buffer::get_wrapped_range_for_line(
       _ => break
     }
   }
-  { first, last }
+  { first, last, }
 }

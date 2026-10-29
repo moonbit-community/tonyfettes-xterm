@@ -1,5 +1,5 @@
 ///|
-fn create_cell_data(attr : Int, chars : String, width : Int) -> CellData {
+fn create_cell_data(attr : Int32, chars : String, width : Int32) -> CellData {
   let code = if chars.length() == 0 { 0 } else { chars[0].to_int() }
   CellData::from_char_data(CharData::new(attr, chars, width, code))
 }

@@ -1,23 +1,23 @@
 ///|
 struct TransitionTable {
-  table : Array[Int]
+  table : Array[Int32]
 }
 
 ///|
-pub fn TransitionTable::new(length : Int) -> TransitionTable {
-  { table: Array::make(length, 0) }
+pub fn TransitionTable::new(length : Int32) -> TransitionTable {
+  { table: Array::make(length, 0), }
 }
 
 ///|
-pub fn TransitionTable::length(self : TransitionTable) -> Int {
+pub fn TransitionTable::length(self : TransitionTable) -> Int32 {
   self.table.length()
 }
 
 ///|
 pub fn TransitionTable::set_default(
   self : TransitionTable,
-  action : Int,
-  next : Int,
+  action : Int32,
+  next : Int32,
 ) -> Unit {
   let value = (action << TransitionActionShift) | next
   for i = 0; i < self.table.length(); i = i + 1 {
@@ -28,10 +28,10 @@ pub fn TransitionTable::set_default(
 ///|
 pub fn TransitionTable::add(
   self : TransitionTable,
-  code : Int,
-  state : Int,
-  action : Int,
-  next : Int,
+  code : Int32,
+  state : Int32,
+  action : Int32,
+  next : Int32,
 ) -> Unit {
   self.table[(state << IndexStateShift) | code] = (
       action << TransitionActionShift
@@ -42,11 +42,11 @@ pub fn TransitionTable::add(
 ///|
 pub fn TransitionTable::add_range(
   self : TransitionTable,
-  start : Int,
-  end : Int,
-  state : Int,
-  action : Int,
-  next : Int,
+  start : Int32,
+  end : Int32,
+  state : Int32,
+  action : Int32,
+  next : Int32,
 ) -> Unit {
   for code = start; code < end; code = code + 1 {
     self.add(code, state, action, next)
@@ -56,10 +56,10 @@ pub fn TransitionTable::add_range(
 ///|
 pub fn TransitionTable::add_many(
   self : TransitionTable,
-  codes : Array[Int],
-  state : Int,
-  action : Int,
-  next : Int,
+  codes : Array[Int32],
+  state : Int32,
+  action : Int32,
+  next : Int32,
 ) -> Unit {
   for code in codes {
     self.add(code, state, action, next)
@@ -69,28 +69,28 @@ pub fn TransitionTable::add_many(
 ///|
 pub fn TransitionTable::transition(
   self : TransitionTable,
-  state : Int,
-  code : Int,
-) -> Int {
+  state : Int32,
+  code : Int32,
+) -> Int32 {
   self.table[(state << IndexStateShift) | code]
 }
 
 ///|
-pub fn transition_action(transition : Int) -> Int {
+pub fn transition_action(transition : Int32) -> Int32 {
   transition >> TransitionActionShift
 }
 
 ///|
-pub fn transition_state(transition : Int) -> Int {
+pub fn transition_state(transition : Int32) -> Int32 {
   transition & TransitionStateMask
 }
 
 ///|
 fn add_executables(
   table : TransitionTable,
-  state : Int,
-  action : Int,
-  next : Int,
+  state : Int32,
+  action : Int32,
+  next : Int32,
 ) -> Unit {
   table.add_range(0x00, 0x18, state, action, next)
   table.add(0x19, state, action, next)

@@ -1,5 +1,8 @@
 ///|
-fn ident_suffix(parser : EscapeSequenceParser, ident : Int) -> (String, String) {
+fn ident_suffix(
+  parser : EscapeSequenceParser,
+  ident : Int32,
+) -> (String, String) {
   let value = parser.ident_to_string(ident)
   if value.length() == 0 {
     return ("", "")
@@ -290,7 +293,7 @@ test "panic EscapeSequenceParser rejects invalid intermediate identifiers" {
 test "panic EscapeSequenceParser rejects long final identifiers" {
   let parser = EscapeSequenceParser::new()
   ignore(
-    parser.identifier({ prefix: None, intermediates: None, final_byte: "mm" }),
+    parser.identifier({ prefix: None, intermediates: None, final_byte: "mm", }),
   )
 }
 
@@ -298,7 +301,7 @@ test "panic EscapeSequenceParser rejects long final identifiers" {
 test "panic EscapeSequenceParser rejects out of range final identifiers" {
   let parser = EscapeSequenceParser::new()
   ignore(
-    parser.identifier({ prefix: None, intermediates: None, final_byte: "0" }),
+    parser.identifier({ prefix: None, intermediates: None, final_byte: "0", }),
   )
 }
 

@@ -1,5 +1,5 @@
 ///|
-fn active_line(terminal : Terminal, y : Int) -> @buffer.BufferLine raise {
+fn active_line(terminal : Terminal, y : Int32) -> @buffer.BufferLine raise {
   match terminal.buffer().line_at_viewport_y(y) {
     Some(line) => line
     None => fail("expected active viewport line")

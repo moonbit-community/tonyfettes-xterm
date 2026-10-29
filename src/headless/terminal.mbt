@@ -12,7 +12,7 @@ struct Terminal {
 
 ///|
 pub fn Terminal::new(
-  options? : TerminalOptions = TerminalOptions::new(),
+  options~ : TerminalOptions = TerminalOptions::new(),
 ) -> Terminal {
   let core = @core.Terminal::new(options.cols, options.rows, options.scrollback)
   {
@@ -28,12 +28,12 @@ pub fn Terminal::new(
 }
 
 ///|
-pub fn Terminal::cols(self : Terminal) -> Int {
+pub fn Terminal::cols(self : Terminal) -> Int32 {
   self.core.cols()
 }
 
 ///|
-pub fn Terminal::rows(self : Terminal) -> Int {
+pub fn Terminal::rows(self : Terminal) -> Int32 {
   self.core.rows()
 }
 
@@ -79,12 +79,12 @@ pub fn Terminal::modes(self : Terminal) -> Modes {
 
 ///|
 pub fn Terminal::buffer(self : Terminal) -> BufferNamespace {
-  { core: self.core }
+  { core: self.core, }
 }
 
 ///|
 pub fn Terminal::parser(self : Terminal) -> ParserApi {
-  { core: self.core }
+  { core: self.core, }
 }
 
 ///|
@@ -146,7 +146,7 @@ pub fn Terminal::on_resize(
 ///|
 pub fn Terminal::on_scroll(
   self : Terminal,
-  listener : (Int) -> Unit,
+  listener : (Int32) -> Unit,
 ) -> @common.Disposable {
   self.core.on_scroll(listener)
 }
@@ -170,9 +170,9 @@ pub fn Terminal::on_write_parsed(
 ///|
 fn Terminal::after_write(
   self : Terminal,
-  before_x : Int,
-  before_y : Int,
-  before_ydisp : Int,
+  before_x : Int32,
+  before_y : Int32,
+  before_ydisp : Int32,
   callback : () -> Unit,
 ) -> Unit {
   if self.core.cursor_x() != before_x || self.core.cursor_y() != before_y {
@@ -187,7 +187,7 @@ fn Terminal::after_write(
   } else {
     after_y
   }
-  self.on_render_emitter.fire({ start, end })
+  self.on_render_emitter.fire({ start, end, })
   self.on_write_parsed_emitter.fire(())
   callback()
 }
@@ -196,7 +196,7 @@ fn Terminal::after_write(
 pub fn Terminal::write(
   self : Terminal,
   data : String,
-  callback? : () -> Unit = fn() { () },
+  callback~ : () -> Unit = fn() { () },
 ) -> Unit {
   let before_x = self.core.cursor_x()
   let before_y = self.core.cursor_y()
@@ -209,7 +209,7 @@ pub fn Terminal::write(
 pub fn Terminal::write_bytes(
   self : Terminal,
   data : Bytes,
-  callback? : () -> Unit = fn() { () },
+  callback~ : () -> Unit = fn() { () },
 ) -> Unit raise {
   let before_x = self.core.cursor_x()
   let before_y = self.core.cursor_y()
@@ -222,7 +222,7 @@ pub fn Terminal::write_bytes(
 pub fn Terminal::writeln(
   self : Terminal,
   data : String,
-  callback? : () -> Unit = fn() { () },
+  callback~ : () -> Unit = fn() { () },
 ) -> Unit {
   let before_x = self.core.cursor_x()
   let before_y = self.core.cursor_y()
@@ -236,7 +236,7 @@ pub fn Terminal::writeln(
 pub fn Terminal::writeln_bytes(
   self : Terminal,
   data : Bytes,
-  callback? : () -> Unit = fn() { () },
+  callback~ : () -> Unit = fn() { () },
 ) -> Unit raise {
   let before_x = self.core.cursor_x()
   let before_y = self.core.cursor_y()
@@ -250,14 +250,14 @@ pub fn Terminal::writeln_bytes(
 pub fn Terminal::input(
   self : Terminal,
   data : String,
-  was_user_input? : Bool = true,
+  was_user_input~ : Bool = true,
 ) -> Unit {
   ignore(was_user_input)
   self.on_data_emitter.fire(data)
 }
 
 ///|
-pub fn Terminal::resize(self : Terminal, cols : Int, rows : Int) -> Unit {
+pub fn Terminal::resize(self : Terminal, cols : Int32, rows : Int32) -> Unit {
   let cols = if cols < 1 { 1 } else { cols }
   let rows = if rows < 1 { 1 } else { rows }
   if cols == self.cols() && rows == self.rows() {
@@ -274,16 +274,16 @@ pub fn Terminal::resize(self : Terminal, cols : Int, rows : Int) -> Unit {
     line_height: self.options.line_height,
     cursor_width: self.options.cursor_width,
   }
-  self.on_resize_emitter.fire({ cols, rows })
+  self.on_resize_emitter.fire({ cols, rows, })
 }
 
 ///|
-pub fn Terminal::scroll_lines(self : Terminal, amount : Int) -> Unit {
+pub fn Terminal::scroll_lines(self : Terminal, amount : Int32) -> Unit {
   self.core.scroll_lines(amount)
 }
 
 ///|
-pub fn Terminal::scroll_pages(self : Terminal, page_count : Int) -> Unit {
+pub fn Terminal::scroll_pages(self : Terminal, page_count : Int32) -> Unit {
   self.scroll_lines(page_count * (self.rows() - 1))
 }
 
@@ -298,7 +298,7 @@ pub fn Terminal::scroll_to_bottom(self : Terminal) -> Unit {
 }
 
 ///|
-pub fn Terminal::scroll_to_line(self : Terminal, line : Int) -> Unit {
+pub fn Terminal::scroll_to_line(self : Terminal, line : Int32) -> Unit {
   self.core.scroll_to_line(line)
 }
 

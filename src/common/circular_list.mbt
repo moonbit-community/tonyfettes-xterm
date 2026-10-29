@@ -1,28 +1,28 @@
 ///|
 pub(all) struct InsertEvent {
-  index : Int
-  amount : Int
+  index : Int32
+  amount : Int32
 } derive(Eq, Debug)
 
 ///|
 pub(all) struct DeleteEvent {
-  index : Int
-  amount : Int
+  index : Int32
+  amount : Int32
 } derive(Eq, Debug)
 
 ///|
 struct CircularList[T] {
   mut array : Array[T?]
-  mut start_index : Int
-  mut length : Int
-  mut max_length : Int
+  mut start_index : Int32
+  mut length : Int32
+  mut max_length : Int32
   on_delete_emitter : Emitter[DeleteEvent]
   on_insert_emitter : Emitter[InsertEvent]
-  on_trim_emitter : Emitter[Int]
+  on_trim_emitter : Emitter[Int32]
 }
 
 ///|
-pub fn[T] CircularList::new(max_length : Int) -> CircularList[T] {
+pub fn[T] CircularList::new(max_length : Int32) -> CircularList[T] {
   let array : Array[T?] = []
   for _i = 0; _i < max_length; _i = _i + 1 {
     array.push(None)
@@ -39,14 +39,14 @@ pub fn[T] CircularList::new(max_length : Int) -> CircularList[T] {
 }
 
 ///|
-pub fn[T] CircularList::max_length(self : CircularList[T]) -> Int {
+pub fn[T] CircularList::max_length(self : CircularList[T]) -> Int32 {
   self.max_length
 }
 
 ///|
 pub fn[T] CircularList::set_max_length(
   self : CircularList[T],
-  new_max_length : Int,
+  new_max_length : Int32,
 ) -> Unit {
   if self.max_length == new_max_length {
     return
@@ -72,14 +72,14 @@ pub fn[T] CircularList::set_max_length(
 }
 
 ///|
-pub fn[T] CircularList::length(self : CircularList[T]) -> Int {
+pub fn[T] CircularList::length(self : CircularList[T]) -> Int32 {
   self.length
 }
 
 ///|
 pub fn[T] CircularList::set_length(
   self : CircularList[T],
-  new_length : Int,
+  new_length : Int32,
 ) -> Unit {
   if new_length > self.length {
     for i = self.length; i < new_length; i = i + 1 {
@@ -90,7 +90,10 @@ pub fn[T] CircularList::set_length(
 }
 
 ///|
-fn[T] CircularList::cyclic_index(self : CircularList[T], index : Int) -> Int {
+fn[T] CircularList::cyclic_index(
+  self : CircularList[T],
+  index : Int32,
+) -> Int32 {
   if self.max_length == 0 {
     0
   } else {
@@ -99,14 +102,14 @@ fn[T] CircularList::cyclic_index(self : CircularList[T], index : Int) -> Int {
 }
 
 ///|
-pub fn[T] CircularList::get(self : CircularList[T], index : Int) -> T? {
+pub fn[T] CircularList::get(self : CircularList[T], index : Int32) -> T? {
   self.array[self.cyclic_index(index)]
 }
 
 ///|
 pub fn[T] CircularList::set(
   self : CircularList[T],
-  index : Int,
+  index : Int32,
   value : T?,
 ) -> Unit {
   self.array[self.cyclic_index(index)] = value
@@ -155,8 +158,8 @@ pub fn[T] CircularList::pop(self : CircularList[T]) -> T? {
 ///|
 pub fn[T] CircularList::splice(
   self : CircularList[T],
-  start : Int,
-  delete_count : Int,
+  start : Int32,
+  delete_count : Int32,
   items : Array[T],
 ) -> Unit {
   if delete_count != 0 {
@@ -164,7 +167,7 @@ pub fn[T] CircularList::splice(
       self.set(i, self.get(i + delete_count))
     }
     self.length -= delete_count
-    self.on_delete_emitter.fire({ index: start, amount: delete_count })
+    self.on_delete_emitter.fire({ index: start, amount: delete_count, })
   }
 
   for i = self.length - 1; i >= start; i = i - 1 {
@@ -174,7 +177,7 @@ pub fn[T] CircularList::splice(
     self.set(start + i, Some(items[i]))
   }
   if items.length() != 0 {
-    self.on_insert_emitter.fire({ index: start, amount: items.length() })
+    self.on_insert_emitter.fire({ index: start, amount: items.length(), })
   }
 
   if self.length + items.length() > self.max_length {
@@ -188,7 +191,10 @@ pub fn[T] CircularList::splice(
 }
 
 ///|
-pub fn[T] CircularList::trim_start(self : CircularList[T], count : Int) -> Unit {
+pub fn[T] CircularList::trim_start(
+  self : CircularList[T],
+  count : Int32,
+) -> Unit {
   let count = if count > self.length { self.length } else { count }
   self.start_index += count
   self.length -= count
@@ -198,9 +204,9 @@ pub fn[T] CircularList::trim_start(self : CircularList[T], count : Int) -> Unit 
 ///|
 pub fn[T] CircularList::shift_elements(
   self : CircularList[T],
-  start : Int,
-  count : Int,
-  offset : Int,
+  start : Int32,
+  count : Int32,
+  offset : Int32,
 ) -> Unit {
   if count <= 0 {
     return
@@ -248,7 +254,7 @@ pub fn[T] CircularList::on_insert(
 ///|
 pub fn[T] CircularList::on_trim(
   self : CircularList[T],
-  listener : (Int) -> Unit,
+  listener : (Int32) -> Unit,
 ) -> Disposable {
   self.on_trim_emitter.event(listener)
 }

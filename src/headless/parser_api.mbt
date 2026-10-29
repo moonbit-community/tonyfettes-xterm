@@ -24,7 +24,7 @@ pub fn ParserApi::register_esc_handler(
 ///|
 pub fn ParserApi::register_osc_handler(
   self : ParserApi,
-  ident : Int,
+  ident : Int32,
   handler : (String) -> Bool,
 ) -> @parser.Disposable {
   self.core.register_osc_handler(ident, handler)

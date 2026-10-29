@@ -12,7 +12,11 @@ struct BufferSet {
 }
 
 ///|
-pub fn BufferSet::new(cols : Int, rows : Int, scrollback : Int) -> BufferSet {
+pub fn BufferSet::new(
+  cols : Int32,
+  rows : Int32,
+  scrollback : Int32,
+) -> BufferSet {
   let normal = Buffer::new(true, cols, rows, scrollback)
   normal.fill_viewport_rows(None)
   {
@@ -71,7 +75,7 @@ pub fn BufferSet::activate_alt_buffer(
 }
 
 ///|
-pub fn BufferSet::resize(self : BufferSet, cols : Int, rows : Int) -> Unit {
+pub fn BufferSet::resize(self : BufferSet, cols : Int32, rows : Int32) -> Unit {
   self.normal.resize(cols, rows)
   self.alt.resize(cols, rows)
 }

@@ -1,18 +1,18 @@
 ///|
 priv struct OscHandlerEntry {
-  id : Int
+  id : Int32
   handler : OscHandler
 }
 
 ///|
 priv struct DcsHandlerEntry {
-  id : Int
+  id : Int32
   handler : DcsHandler
 }
 
 ///|
 priv struct ApcHandlerEntry {
-  id : Int
+  id : Int32
   handler : ApcHandler
 }
 
@@ -29,13 +29,13 @@ pub fn OscHandler::from_callbacks(
   put : (String) -> Unit,
   end : (Bool) -> Bool,
 ) -> OscHandler {
-  { start_cb: start, put_cb: put, end_cb: end }
+  { start_cb: start, put_cb: put, end_cb: end, }
 }
 
 ///|
 pub fn OscHandler::new(handler : (String) -> Bool) -> OscHandler {
-  let data : Ref[String] = Ref::{ val: "" }
-  let hit_limit : Ref[Bool] = Ref::{ val: false }
+  let data : Ref[String] = Ref::{ val: "", }
+  let hit_limit : Ref[Bool] = Ref::{ val: false, }
   OscHandler::from_callbacks(
     fn() {
       data.val = ""
@@ -82,25 +82,25 @@ fn OscHandler::end(self : OscHandler, success : Bool) -> Bool {
 
 ///|
 struct OscParser {
-  handlers : Map[Int, Array[OscHandlerEntry]]
+  handlers : Map[Int32, Array[OscHandlerEntry]]
   mut active : Array[OscHandlerEntry]
-  mut next_id : Int
-  mut state : Int
-  mut ident : Int
-  mut fallback : (Int, String, String?) -> Unit
+  mut next_id : Int32
+  mut state : Int32
+  mut ident : Int32
+  mut fallback : (Int32, String, String?) -> Unit
 }
 
 ///|
-const OscStateStart : Int = 0
+const OscStateStart : Int32 = 0
 
 ///|
-const OscStateId : Int = 1
+const OscStateId : Int32 = 1
 
 ///|
-const OscStatePayload : Int = 2
+const OscStatePayload : Int32 = 2
 
 ///|
-const OscStateAbort : Int = 3
+const OscStateAbort : Int32 = 3
 
 ///|
 pub fn OscParser::new() -> OscParser {
@@ -117,7 +117,7 @@ pub fn OscParser::new() -> OscParser {
 ///|
 pub fn OscParser::register_handler(
   self : OscParser,
-  ident : Int,
+  ident : Int32,
   handler : OscHandler,
 ) -> Disposable {
   let id = self.next_id
@@ -130,7 +130,7 @@ pub fn OscParser::register_handler(
       list
     }
   }
-  list.push({ id, handler })
+  list.push({ id, handler, })
   Disposable(fn() {
     match self.handlers.get(ident) {
       Some(list) =>
@@ -144,14 +144,14 @@ pub fn OscParser::register_handler(
 }
 
 ///|
-pub fn OscParser::clear_handler(self : OscParser, ident : Int) -> Unit {
+pub fn OscParser::clear_handler(self : OscParser, ident : Int32) -> Unit {
   self.handlers.remove(ident)
 }
 
 ///|
 pub fn OscParser::set_handler_fallback(
   self : OscParser,
-  handler : (Int, String, String?) -> Unit,
+  handler : (Int32, String, String?) -> Unit,
 ) -> Unit {
   self.fallback = handler
 }
@@ -270,14 +270,14 @@ pub fn DcsHandler::from_callbacks(
   put : (String) -> Unit,
   unhook : (Bool) -> Bool,
 ) -> DcsHandler {
-  { hook_cb: hook, put_cb: put, unhook_cb: unhook }
+  { hook_cb: hook, put_cb: put, unhook_cb: unhook, }
 }
 
 ///|
 pub fn DcsHandler::new(handler : (String, Params) -> Bool) -> DcsHandler {
-  let data : Ref[String] = Ref::{ val: "" }
-  let params : Ref[Params] = Ref::{ val: Params::from_array([Param(0)]) }
-  let hit_limit : Ref[Bool] = Ref::{ val: false }
+  let data : Ref[String] = Ref::{ val: "", }
+  let params : Ref[Params] = Ref::{ val: Params::from_array([Param(0)]), }
+  let hit_limit : Ref[Bool] = Ref::{ val: false, }
   DcsHandler::from_callbacks(
     fn(value) {
       if value.length() > 1 || value.param_at(0) != 0 {
@@ -330,11 +330,11 @@ fn DcsHandler::unhook(self : DcsHandler, success : Bool) -> Bool {
 
 ///|
 struct DcsParser {
-  handlers : Map[Int, Array[DcsHandlerEntry]]
+  handlers : Map[Int32, Array[DcsHandlerEntry]]
   mut active : Array[DcsHandlerEntry]
-  mut next_id : Int
-  mut ident : Int
-  mut fallback : (Int, String, DcsFallbackPayload) -> Unit
+  mut next_id : Int32
+  mut ident : Int32
+  mut fallback : (Int32, String, DcsFallbackPayload) -> Unit
 }
 
 ///|
@@ -358,7 +358,7 @@ pub fn DcsParser::new() -> DcsParser {
 ///|
 pub fn DcsParser::register_handler(
   self : DcsParser,
-  ident : Int,
+  ident : Int32,
   handler : DcsHandler,
 ) -> Disposable {
   let id = self.next_id
@@ -371,7 +371,7 @@ pub fn DcsParser::register_handler(
       list
     }
   }
-  list.push({ id, handler })
+  list.push({ id, handler, })
   Disposable(fn() {
     match self.handlers.get(ident) {
       Some(list) =>
@@ -385,14 +385,14 @@ pub fn DcsParser::register_handler(
 }
 
 ///|
-pub fn DcsParser::clear_handler(self : DcsParser, ident : Int) -> Unit {
+pub fn DcsParser::clear_handler(self : DcsParser, ident : Int32) -> Unit {
   self.handlers.remove(ident)
 }
 
 ///|
 pub fn DcsParser::set_handler_fallback(
   self : DcsParser,
-  handler : (Int, String, DcsFallbackPayload) -> Unit,
+  handler : (Int32, String, DcsFallbackPayload) -> Unit,
 ) -> Unit {
   self.fallback = handler
 }
@@ -416,7 +416,11 @@ pub fn DcsParser::reset(self : DcsParser) -> Unit {
 }
 
 ///|
-pub fn DcsParser::hook(self : DcsParser, ident : Int, params : Params) -> Unit {
+pub fn DcsParser::hook(
+  self : DcsParser,
+  ident : Int32,
+  params : Params,
+) -> Unit {
   self.reset()
   self.ident = ident
   self.active = self.handlers.get(ident).unwrap_or([])
@@ -471,13 +475,13 @@ pub fn ApcHandler::from_callbacks(
   put : (String) -> Unit,
   end : (Bool) -> Bool,
 ) -> ApcHandler {
-  { start_cb: start, put_cb: put, end_cb: end }
+  { start_cb: start, put_cb: put, end_cb: end, }
 }
 
 ///|
 pub fn ApcHandler::new(handler : (String) -> Bool) -> ApcHandler {
-  let data : Ref[String] = Ref::{ val: "" }
-  let hit_limit : Ref[Bool] = Ref::{ val: false }
+  let data : Ref[String] = Ref::{ val: "", }
+  let hit_limit : Ref[Bool] = Ref::{ val: false, }
   ApcHandler::from_callbacks(
     fn() {
       data.val = ""
@@ -524,11 +528,11 @@ fn ApcHandler::end(self : ApcHandler, success : Bool) -> Bool {
 
 ///|
 struct ApcParser {
-  handlers : Map[Int, Array[ApcHandlerEntry]]
+  handlers : Map[Int32, Array[ApcHandlerEntry]]
   mut active : Array[ApcHandlerEntry]
-  mut next_id : Int
-  mut ident : Int
-  mut fallback : (Int, String, String?) -> Unit
+  mut next_id : Int32
+  mut ident : Int32
+  mut fallback : (Int32, String, String?) -> Unit
 }
 
 ///|
@@ -545,7 +549,7 @@ pub fn ApcParser::new() -> ApcParser {
 ///|
 pub fn ApcParser::register_handler(
   self : ApcParser,
-  ident : Int,
+  ident : Int32,
   handler : ApcHandler,
 ) -> Disposable {
   let id = self.next_id
@@ -558,7 +562,7 @@ pub fn ApcParser::register_handler(
       list
     }
   }
-  list.push({ id, handler })
+  list.push({ id, handler, })
   Disposable(fn() {
     match self.handlers.get(ident) {
       Some(list) =>
@@ -572,14 +576,14 @@ pub fn ApcParser::register_handler(
 }
 
 ///|
-pub fn ApcParser::clear_handler(self : ApcParser, ident : Int) -> Unit {
+pub fn ApcParser::clear_handler(self : ApcParser, ident : Int32) -> Unit {
   self.handlers.remove(ident)
 }
 
 ///|
 pub fn ApcParser::set_handler_fallback(
   self : ApcParser,
-  handler : (Int, String, String?) -> Unit,
+  handler : (Int32, String, String?) -> Unit,
 ) -> Unit {
   self.fallback = handler
 }
@@ -603,7 +607,7 @@ pub fn ApcParser::reset(self : ApcParser) -> Unit {
 }
 
 ///|
-pub fn ApcParser::start(self : ApcParser, ident : Int) -> Unit {
+pub fn ApcParser::start(self : ApcParser, ident : Int32) -> Unit {
   self.reset()
   self.ident = ident
   self.active = self.handlers.get(ident).unwrap_or([])

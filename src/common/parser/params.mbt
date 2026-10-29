@@ -1,25 +1,25 @@
 ///|
-const MaxValue : Int = 0x7FFFFFFF
+const MaxValue : Int32 = 0x7FFFFFFF
 
 ///|
-const MaxSubparams : Int = 256
+const MaxSubparams : Int32 = 256
 
 ///|
 pub(all) enum ParamEntry {
-  Param(Int)
-  SubParams(Array[Int])
+  Param(Int32)
+  SubParams(Array[Int32])
 } derive(Eq, Debug)
 
 ///|
 struct Params {
-  max_length : Int
-  max_subparams_length : Int
-  params : Array[Int]
-  sub_params : Array[Int]
-  sub_param_starts : Array[Int]
-  sub_param_ends : Array[Int]
-  mut length : Int
-  mut sub_params_length : Int
+  max_length : Int32
+  max_subparams_length : Int32
+  params : Array[Int32]
+  sub_params : Array[Int32]
+  sub_param_starts : Array[Int32]
+  sub_param_ends : Array[Int32]
+  mut length : Int32
+  mut sub_params_length : Int32
   mut reject_digits : Bool
   mut reject_sub_digits : Bool
   mut digit_is_sub : Bool
@@ -27,8 +27,8 @@ struct Params {
 
 ///|
 pub fn Params::new(
-  max_length? : Int = 32,
-  max_subparams_length? : Int = 32,
+  max_length~ : Int32 = 32,
+  max_subparams_length~ : Int32 = 32,
 ) -> Params {
   guard max_subparams_length <= MaxSubparams else {
     abort("maxSubParamsLength must not be greater than 256")
@@ -72,33 +72,33 @@ pub fn Params::from_array(values : Array[ParamEntry]) -> Params {
 }
 
 ///|
-pub fn Params::max_length(self : Params) -> Int {
+pub fn Params::max_length(self : Params) -> Int32 {
   self.max_length
 }
 
 ///|
-pub fn Params::max_subparams_length(self : Params) -> Int {
+pub fn Params::max_subparams_length(self : Params) -> Int32 {
   self.max_subparams_length
 }
 
 ///|
-pub fn Params::length(self : Params) -> Int {
+pub fn Params::length(self : Params) -> Int32 {
   self.length
 }
 
 ///|
-pub fn Params::sub_params_length(self : Params) -> Int {
+pub fn Params::sub_params_length(self : Params) -> Int32 {
   self.sub_params_length
 }
 
 ///|
-pub fn Params::param_at(self : Params, index : Int) -> Int {
+pub fn Params::param_at(self : Params, index : Int32) -> Int32 {
   self.params[index]
 }
 
 ///|
-pub fn Params::params_slice(self : Params) -> Array[Int] {
-  let result : Array[Int] = []
+pub fn Params::params_slice(self : Params) -> Array[Int32] {
+  let result : Array[Int32] = []
   for i = 0; i < self.length; i = i + 1 {
     result.push(self.params[i])
   }
@@ -106,7 +106,7 @@ pub fn Params::params_slice(self : Params) -> Array[Int] {
 }
 
 ///|
-fn clamp_param(value : Int) -> Int {
+fn clamp_param(value : Int32) -> Int32 {
   if value > MaxValue {
     MaxValue
   } else {
@@ -115,7 +115,7 @@ fn clamp_param(value : Int) -> Int {
 }
 
 ///|
-fn Params::add_param_unchecked(self : Params, value : Int) -> Unit {
+fn Params::add_param_unchecked(self : Params, value : Int32) -> Unit {
   self.digit_is_sub = false
   if self.length >= self.max_length {
     self.reject_digits = true
@@ -129,7 +129,7 @@ fn Params::add_param_unchecked(self : Params, value : Int) -> Unit {
 }
 
 ///|
-fn Params::add_sub_param_unchecked(self : Params, value : Int) -> Unit {
+fn Params::add_sub_param_unchecked(self : Params, value : Int32) -> Unit {
   self.digit_is_sub = true
   if self.length == 0 {
     return
@@ -173,7 +173,7 @@ pub fn Params::to_array(self : Params) -> Array[ParamEntry] {
     let start = self.sub_param_starts[i]
     let end = self.sub_param_ends[i]
     if end - start > 0 {
-      let sub_params : Array[Int] = []
+      let sub_params : Array[Int32] = []
       for j = start; j < end; j = j + 1 {
         sub_params.push(self.sub_params[j])
       }
@@ -205,28 +205,28 @@ pub fn Params::reset_zdm(self : Params) -> Unit {
 }
 
 ///|
-pub fn Params::add_param(self : Params, value : Int) -> Unit {
+pub fn Params::add_param(self : Params, value : Int32) -> Unit {
   guard value >= -1 else { abort("values lesser than -1 are not allowed") }
   self.add_param_unchecked(value)
 }
 
 ///|
-pub fn Params::add_sub_param(self : Params, value : Int) -> Unit {
+pub fn Params::add_sub_param(self : Params, value : Int32) -> Unit {
   guard value >= -1 else { abort("values lesser than -1 are not allowed") }
   self.add_sub_param_unchecked(value)
 }
 
 ///|
-pub fn Params::has_sub_params(self : Params, index : Int) -> Bool {
+pub fn Params::has_sub_params(self : Params, index : Int32) -> Bool {
   self.sub_param_ends[index] - self.sub_param_starts[index] > 0
 }
 
 ///|
-pub fn Params::get_sub_params(self : Params, index : Int) -> Array[Int]? {
+pub fn Params::get_sub_params(self : Params, index : Int32) -> Array[Int32]? {
   if !self.has_sub_params(index) {
     return None
   }
-  let result : Array[Int] = []
+  let result : Array[Int32] = []
   for i = self.sub_param_starts[index]
       i < self.sub_param_ends[index]
       i = i + 1 {
@@ -236,8 +236,8 @@ pub fn Params::get_sub_params(self : Params, index : Int) -> Array[Int]? {
 }
 
 ///|
-pub fn Params::get_sub_params_all(self : Params) -> Map[Int, Array[Int]] {
-  let result : Map[Int, Array[Int]] = {}
+pub fn Params::get_sub_params_all(self : Params) -> Map[Int32, Array[Int32]] {
+  let result : Map[Int32, Array[Int32]] = {}
   for i = 0; i < self.length; i = i + 1 {
     match self.get_sub_params(i) {
       Some(values) => result[i] = values
@@ -248,7 +248,7 @@ pub fn Params::get_sub_params_all(self : Params) -> Map[Int, Array[Int]] {
 }
 
 ///|
-pub fn Params::add_digit(self : Params, value : Int) -> Unit {
+pub fn Params::add_digit(self : Params, value : Int32) -> Unit {
   let length = if self.digit_is_sub {
     self.sub_params_length
   } else {

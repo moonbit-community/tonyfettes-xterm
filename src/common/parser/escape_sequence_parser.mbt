@@ -7,40 +7,40 @@ pub(all) struct FunctionIdentifier {
 
 ///|
 priv struct CsiHandlerEntry {
-  id : Int
+  id : Int32
   handler : (Params) -> Bool
 }
 
 ///|
 priv struct EscHandlerEntry {
-  id : Int
+  id : Int32
   handler : () -> Bool
 }
 
 ///|
 struct EscapeSequenceParser {
-  initial_state : Int
-  mut current_state : Int
-  mut preceding_join_state : Int
+  initial_state : Int32
+  mut current_state : Int32
+  mut preceding_join_state : Int32
   params : Params
-  mut collect : Int
+  mut collect : Int32
   transitions : TransitionTable
-  mut next_id : Int
+  mut next_id : Int32
   mut print_handler : (String) -> Unit
-  execute_handlers : Map[Int, (Int) -> Bool]
-  csi_handlers : Map[Int, Array[CsiHandlerEntry]]
-  esc_handlers : Map[Int, Array[EscHandlerEntry]]
+  execute_handlers : Map[Int32, (Int32) -> Bool]
+  csi_handlers : Map[Int32, Array[CsiHandlerEntry]]
+  esc_handlers : Map[Int32, Array[EscHandlerEntry]]
   osc_parser : OscParser
   dcs_parser : DcsParser
   apc_parser : ApcParser
-  mut execute_fallback : (Int) -> Unit
-  mut csi_fallback : (Int, Params) -> Unit
-  mut esc_fallback : (Int) -> Unit
+  mut execute_fallback : (Int32) -> Unit
+  mut csi_fallback : (Int32, Params) -> Unit
+  mut esc_fallback : (Int32) -> Unit
 }
 
 ///|
 pub fn EscapeSequenceParser::new(
-  transitions? : TransitionTable = vt500_transition_table(),
+  transitions~ : TransitionTable = vt500_transition_table(),
 ) -> EscapeSequenceParser {
   let parser = {
     initial_state: ParserStateGround,
@@ -62,7 +62,7 @@ pub fn EscapeSequenceParser::new(
     esc_fallback: fn(_) { () },
   }
   parser.register_esc_handler(
-    { prefix: None, intermediates: None, final_byte: "\\" },
+    { prefix: None, intermediates: None, final_byte: "\\", },
     fn() { true },
   )
   |> ignore
@@ -70,19 +70,23 @@ pub fn EscapeSequenceParser::new(
 }
 
 ///|
-pub fn EscapeSequenceParser::initial_state(self : EscapeSequenceParser) -> Int {
+pub fn EscapeSequenceParser::initial_state(
+  self : EscapeSequenceParser,
+) -> Int32 {
   self.initial_state
 }
 
 ///|
-pub fn EscapeSequenceParser::current_state(self : EscapeSequenceParser) -> Int {
+pub fn EscapeSequenceParser::current_state(
+  self : EscapeSequenceParser,
+) -> Int32 {
   self.current_state
 }
 
 ///|
 pub fn EscapeSequenceParser::set_current_state(
   self : EscapeSequenceParser,
-  state : Int,
+  state : Int32,
 ) -> Unit {
   self.current_state = state
 }
@@ -93,7 +97,7 @@ pub fn EscapeSequenceParser::params(self : EscapeSequenceParser) -> Params {
 }
 
 ///|
-pub fn EscapeSequenceParser::collect(self : EscapeSequenceParser) -> Int {
+pub fn EscapeSequenceParser::collect(self : EscapeSequenceParser) -> Int32 {
   self.collect
 }
 
@@ -107,7 +111,7 @@ pub fn EscapeSequenceParser::collect_string(
 ///|
 pub fn EscapeSequenceParser::preceding_join_state(
   self : EscapeSequenceParser,
-) -> Int {
+) -> Int32 {
   self.preceding_join_state
 }
 
@@ -140,7 +144,7 @@ pub fn EscapeSequenceParser::apc_parser(
 }
 
 ///|
-fn first_code_unit(value : String) -> Int {
+fn first_code_unit(value : String) -> Int32 {
   if value.length() == 0 {
     return 0
   }
@@ -151,9 +155,9 @@ fn first_code_unit(value : String) -> Int {
 pub fn EscapeSequenceParser::identifier(
   _self : EscapeSequenceParser,
   id : FunctionIdentifier,
-  final_start? : Int = 0x40,
-  final_end? : Int = 0x7E,
-) -> Int {
+  final_start~ : Int32 = 0x40,
+  final_end~ : Int32 = 0x7E,
+) -> Int32 {
   let mut result = 0
   match id.prefix {
     Some(prefix) => {
@@ -195,7 +199,7 @@ pub fn EscapeSequenceParser::identifier(
 ///|
 pub fn EscapeSequenceParser::ident_to_string(
   _self : EscapeSequenceParser,
-  ident : Int,
+  ident : Int32,
 ) -> String {
   let mut value = ident
   let mut result = ""
@@ -234,9 +238,9 @@ pub fn EscapeSequenceParser::clear_print_handler(
 
 ///|
 fn register_csi_entry(
-  handlers : Map[Int, Array[CsiHandlerEntry]],
-  ident : Int,
-  id : Int,
+  handlers : Map[Int32, Array[CsiHandlerEntry]],
+  ident : Int32,
+  id : Int32,
   handler : (Params) -> Bool,
 ) -> Disposable {
   let list = match handlers.get(ident) {
@@ -247,7 +251,7 @@ fn register_csi_entry(
       list
     }
   }
-  list.push({ id, handler })
+  list.push({ id, handler, })
   Disposable(fn() {
     match handlers.get(ident) {
       Some(list) =>
@@ -262,9 +266,9 @@ fn register_csi_entry(
 
 ///|
 fn register_esc_entry(
-  handlers : Map[Int, Array[EscHandlerEntry]],
-  ident : Int,
-  id : Int,
+  handlers : Map[Int32, Array[EscHandlerEntry]],
+  ident : Int32,
+  id : Int32,
   handler : () -> Bool,
 ) -> Disposable {
   let list = match handlers.get(ident) {
@@ -275,7 +279,7 @@ fn register_esc_entry(
       list
     }
   }
-  list.push({ id, handler })
+  list.push({ id, handler, })
   Disposable(fn() {
     match handlers.get(ident) {
       Some(list) =>
@@ -311,7 +315,7 @@ pub fn EscapeSequenceParser::clear_csi_handler(
 ///|
 pub fn EscapeSequenceParser::set_csi_handler_fallback(
   self : EscapeSequenceParser,
-  handler : (Int, Params) -> Unit,
+  handler : (Int32, Params) -> Unit,
 ) -> Unit {
   self.csi_fallback = handler
 }
@@ -341,7 +345,7 @@ pub fn EscapeSequenceParser::clear_esc_handler(
 ///|
 pub fn EscapeSequenceParser::set_esc_handler_fallback(
   self : EscapeSequenceParser,
-  handler : (Int) -> Unit,
+  handler : (Int32) -> Unit,
 ) -> Unit {
   self.esc_fallback = handler
 }
@@ -350,7 +354,7 @@ pub fn EscapeSequenceParser::set_esc_handler_fallback(
 pub fn EscapeSequenceParser::set_execute_handler(
   self : EscapeSequenceParser,
   flag : String,
-  handler : (Int) -> Bool,
+  handler : (Int32) -> Bool,
 ) -> Unit {
   self.execute_handlers[first_code_unit(flag)] = handler
 }
@@ -366,7 +370,7 @@ pub fn EscapeSequenceParser::clear_execute_handler(
 ///|
 pub fn EscapeSequenceParser::set_execute_handler_fallback(
   self : EscapeSequenceParser,
-  handler : (Int) -> Unit,
+  handler : (Int32) -> Unit,
 ) -> Unit {
   self.execute_fallback = handler
 }
@@ -391,7 +395,7 @@ pub fn EscapeSequenceParser::clear_dcs_handler(
 ///|
 pub fn EscapeSequenceParser::set_dcs_handler_fallback(
   self : EscapeSequenceParser,
-  handler : (Int, String, DcsFallbackPayload) -> Unit,
+  handler : (Int32, String, DcsFallbackPayload) -> Unit,
 ) -> Unit {
   self.dcs_parser.set_handler_fallback(handler)
 }
@@ -399,7 +403,7 @@ pub fn EscapeSequenceParser::set_dcs_handler_fallback(
 ///|
 pub fn EscapeSequenceParser::register_osc_handler(
   self : EscapeSequenceParser,
-  ident : Int,
+  ident : Int32,
   handler : OscHandler,
 ) -> Disposable {
   self.osc_parser.register_handler(ident, handler)
@@ -408,7 +412,7 @@ pub fn EscapeSequenceParser::register_osc_handler(
 ///|
 pub fn EscapeSequenceParser::clear_osc_handler(
   self : EscapeSequenceParser,
-  ident : Int,
+  ident : Int32,
 ) -> Unit {
   self.osc_parser.clear_handler(ident)
 }
@@ -416,7 +420,7 @@ pub fn EscapeSequenceParser::clear_osc_handler(
 ///|
 pub fn EscapeSequenceParser::set_osc_handler_fallback(
   self : EscapeSequenceParser,
-  handler : (Int, String, String?) -> Unit,
+  handler : (Int32, String, String?) -> Unit,
 ) -> Unit {
   self.osc_parser.set_handler_fallback(handler)
 }
@@ -462,23 +466,23 @@ pub fn EscapeSequenceParser::clear_apc_handler(
 ///|
 pub fn EscapeSequenceParser::set_apc_handler_fallback(
   self : EscapeSequenceParser,
-  handler : (Int, String, String?) -> Unit,
+  handler : (Int32, String, String?) -> Unit,
 ) -> Unit {
   self.apc_parser.set_handler_fallback(handler)
 }
 
 ///|
-fn is_printable(code : Int) -> Bool {
+fn is_printable(code : Int32) -> Bool {
   code >= 0x20 && (code <= 0x7E || code >= NonAsciiPrintable)
 }
 
 ///|
-fn is_osc_put_continue(code : Int) -> Bool {
+fn is_osc_put_continue(code : Int32) -> Bool {
   code >= 0x20 && !(code > 0x7F && code < NonAsciiPrintable)
 }
 
 ///|
-fn is_dcs_put_stop(code : Int) -> Bool {
+fn is_dcs_put_stop(code : Int32) -> Bool {
   code == 0x18 ||
   code == 0x1A ||
   code == 0x1B ||
@@ -486,7 +490,7 @@ fn is_dcs_put_stop(code : Int) -> Bool {
 }
 
 ///|
-fn is_apc_put_continue(code : Int) -> Bool {
+fn is_apc_put_continue(code : Int32) -> Bool {
   (code >= 0x20 && code < 0x7F) ||
   (code >= 0x08 && code < 0x0E) ||
   code >= NonAsciiPrintable
@@ -495,7 +499,7 @@ fn is_apc_put_continue(code : Int) -> Bool {
 ///|
 fn EscapeSequenceParser::run_csi_handlers(
   self : EscapeSequenceParser,
-  ident : Int,
+  ident : Int32,
 ) -> Unit {
   match self.csi_handlers.get(ident) {
     Some(handlers) => {
@@ -517,7 +521,7 @@ fn EscapeSequenceParser::run_csi_handlers(
 ///|
 fn EscapeSequenceParser::run_esc_handlers(
   self : EscapeSequenceParser,
-  ident : Int,
+  ident : Int32,
 ) -> Unit {
   match self.esc_handlers.get(ident) {
     Some(handlers) => {
@@ -539,7 +543,7 @@ fn EscapeSequenceParser::run_esc_handlers(
 ///|
 fn EscapeSequenceParser::execute(
   self : EscapeSequenceParser,
-  code : Int,
+  code : Int32,
 ) -> Unit {
   match self.execute_handlers.get(code) {
     Some(handler) => handler(code) |> ignore

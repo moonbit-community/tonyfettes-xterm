@@ -8,20 +8,20 @@ pub fn Disposable::dispose(self : Disposable) -> Unit {
 
 ///|
 priv struct Listener[T] {
-  id : Int
+  id : Int32
   handler : (T) -> Unit
 }
 
 ///|
 struct Emitter[T] {
   mut disposed : Bool
-  mut next_id : Int
+  mut next_id : Int32
   listeners : Array[Listener[T]]
 }
 
 ///|
 pub fn[T] Emitter::new() -> Emitter[T] {
-  { disposed: false, next_id: 0, listeners: [] }
+  { disposed: false, next_id: 0, listeners: [], }
 }
 
 ///|
@@ -35,7 +35,7 @@ pub fn[T] Emitter::event(
 
   let id = self.next_id
   self.next_id += 1
-  self.listeners.push({ id, handler: listener })
+  self.listeners.push({ id, handler: listener, })
   Disposable(fn() {
     match self.listeners.search_by(entry => entry.id == id) {
       Some(index) => self.listeners.remove(index) |> ignore

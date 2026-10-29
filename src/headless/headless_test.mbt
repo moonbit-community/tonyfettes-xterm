@@ -1,5 +1,5 @@
 ///|
-fn expect_line(buffer : BufferView, index : Int) -> BufferLineView raise {
+fn expect_line(buffer : BufferView, index : Int32) -> BufferLineView raise {
   match buffer.get_line(index) {
     Some(line) => line
     None => fail("expected buffer line")
@@ -7,7 +7,7 @@ fn expect_line(buffer : BufferView, index : Int) -> BufferLineView raise {
 }
 
 ///|
-fn expect_cell(line : BufferLineView, index : Int) -> BufferCellView raise {
+fn expect_cell(line : BufferLineView, index : Int32) -> BufferCellView raise {
   match line.get_cell(index) {
     Some(cell) => cell
     None => fail("expected buffer cell")
@@ -132,7 +132,7 @@ test "Terminal exposes modes and reset defaults" {
 ///|
 test "Terminal writes strings, bytes, and line endings" {
   let terminal = Terminal::new(options=TerminalOptions::new(cols=8, rows=3))
-  let callbacks : Ref[Int] = Ref::{ val: 0 }
+  let callbacks : Ref[Int32] = Ref::{ val: 0, }
 
   terminal.write("ab", callback=fn() { callbacks.val += 1 })
   terminal.write_bytes(@utf8.encode("中"), callback=fn() { callbacks.val += 1 })
@@ -220,7 +220,7 @@ test "Terminal parser API registers custom handlers" {
   let parser = terminal.parser()
 
   parser.register_csi_handler(
-    { prefix: Some("?"), intermediates: None, final_byte: "z" },
+    { prefix: Some("?"), intermediates: None, final_byte: "z", },
     fn(params) {
       reports.push("csi:\{params.params_slice()}")
       true
@@ -228,7 +228,7 @@ test "Terminal parser API registers custom handlers" {
   )
   |> ignore
   parser.register_esc_handler(
-    { prefix: None, intermediates: None, final_byte: "7" },
+    { prefix: None, intermediates: None, final_byte: "7", },
     fn() {
       reports.push("esc")
       true
@@ -241,7 +241,7 @@ test "Terminal parser API registers custom handlers" {
   })
   |> ignore
   parser.register_dcs_handler(
-    { prefix: None, intermediates: Some("+"), final_byte: "p" },
+    { prefix: None, intermediates: Some("+"), final_byte: "p", },
     fn(data, params) {
       reports.push("dcs:\{params.params_slice()}:\{data}")
       true
@@ -249,7 +249,7 @@ test "Terminal parser API registers custom handlers" {
   )
   |> ignore
   parser.register_apc_handler(
-    { prefix: None, intermediates: Some("+"), final_byte: "p" },
+    { prefix: None, intermediates: Some("+"), final_byte: "p", },
     fn(data) {
       reports.push("apc:\{data}")
       true
@@ -263,7 +263,7 @@ test "Terminal parser API registers custom handlers" {
   terminal.write("\u{1b}P1+pabc\u{1b}\\")
   terminal.write("\u{1b}_+pxyz\u{1b}\\")
 
-  inspect(
+  debug_inspect(
     reports,
     content="[\"csi:[1, 2]\", \"esc\", \"osc:hello\", " +
       "\"dcs:[1]:abc\", \"apc:xyz\"]",
@@ -275,14 +275,14 @@ test "Terminal events fire through the headless API" {
   let terminal = Terminal::new(options=TerminalOptions::new(cols=3, rows=2))
   let data_events : Array[String] = []
   let title_events : Array[String] = []
-  let scroll_events : Array[Int] = []
+  let scroll_events : Array[Int32] = []
   let resize_events : Array[String] = []
   let render_events : Array[RenderEvent] = []
-  let bell_count : Ref[Int] = Ref::{ val: 0 }
-  let line_feed_count : Ref[Int] = Ref::{ val: 0 }
-  let cursor_move_count : Ref[Int] = Ref::{ val: 0 }
-  let write_parsed_count : Ref[Int] = Ref::{ val: 0 }
-  let binary_count : Ref[Int] = Ref::{ val: 0 }
+  let bell_count : Ref[Int32] = Ref::{ val: 0, }
+  let line_feed_count : Ref[Int32] = Ref::{ val: 0, }
+  let cursor_move_count : Ref[Int32] = Ref::{ val: 0, }
+  let write_parsed_count : Ref[Int32] = Ref::{ val: 0, }
+  let binary_count : Ref[Int32] = Ref::{ val: 0, }
 
   let binary_disposable = terminal.on_binary(fn(_) { binary_count.val += 1 })
   binary_disposable.dispose()
@@ -310,9 +310,9 @@ test "Terminal events fire through the headless API" {
   terminal.write("1\r\n2\r\n3\r\n4")
   terminal.write("\u{1b}[1A")
 
-  inspect(data_events, content="[\"kbd\"]")
-  inspect(title_events, content="[\"title\"]")
-  inspect(resize_events, content="[\"4x3\"]")
+  debug_inspect(data_events, content="[\"kbd\"]")
+  debug_inspect(title_events, content="[\"title\"]")
+  debug_inspect(resize_events, content="[\"4x3\"]")
   guard binary_count.val == 0 &&
     bell_count.val == 1 &&
     line_feed_count.val >= 4 &&
@@ -326,7 +326,7 @@ test "Terminal events fire through the headless API" {
   terminal.dispose()
   terminal.input("after")
   terminal.write("\u{0007}")
-  inspect(data_events, content="[\"kbd\"]")
+  debug_inspect(data_events, content="[\"kbd\"]")
   guard bell_count.val == 1 else {
     fail("dispose should clear core event listeners")
   }

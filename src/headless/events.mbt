@@ -1,11 +1,11 @@
 ///|
 pub(all) struct RenderEvent {
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
 } derive(Eq, Debug)
 
 ///|
 pub(all) struct ResizeEvent {
-  cols : Int
-  rows : Int
+  cols : Int32
+  rows : Int32
 } derive(Eq, Debug)
