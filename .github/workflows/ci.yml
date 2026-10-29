@@ -15,7 +15,7 @@ jobs:
         toolchain: [latest, nightly]
     steps:
       - uses: actions/checkout@v4
-      - uses: moonbit-community/setup-moonbit@v0.1.2
+      - uses: moonbit-community/setup-moonbit@main
         with:
           version: ${{ matrix.toolchain }}
       - run: moon version --all
